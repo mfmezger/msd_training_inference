@@ -35,7 +35,7 @@ def convert_to_pt(cfg):
     brain_image_list_test = os.listdir(os.path.join( brain_dir, "imagesTs"))
 
     # start the conversion of training images and training labels.
-
+    
 
     # save the images in the new file structure
 
