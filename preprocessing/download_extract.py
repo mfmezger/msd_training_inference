@@ -4,6 +4,52 @@ import yaml
 from monai.apps import download_and_extract
 
 
+def convert_to_pt(cfg):
+
+    root_dir = cfg["data_storage"]["data_location"]
+    pt_dir = cfg["data_storage"]["pt_location"]
+    # select the folders to convert to pt
+    brain_dir = os.path.join(root_dir, "Task01_BrainTumour")
+    heart_dir = os.path.join(root_dir, "Task02_Heart")
+    liver_dir = os.path.join(root_dir, "Task03_Liver")
+    hippo_dir = os.path.join(root_dir, "Task04_Hippocampus")
+    prostate_dir = os.path.join(root_dir, "Task05_Prostate")
+    lung_dir = os.path.join(root_dir, "Task06_Lung")
+    pancreas_dir = os.path.join(root_dir, "Task07_Pancreas")
+    vessel_dir = os.path.join(root_dir, "Task08_HepaticVessel")
+    spleen_dir = os.path.join(root_dir, "Task09_Spleen")
+    colon_dir = os.path.join(root_dir, "Task10_Colon")
+
+    # create new folders from names for the tasks
+    folder_list = ["Task01_BrainTumor", "Task02_Heart", "Task03_Liver", "Task04_Hippocampus", "Task05_Prostate", "Task06_Lung", "Task07_Pancreas", "Task08_HepaticVessel", "Task09_Spleen", "Task10_Colon"]
+
+    # create new folders from names in folder list in pt_dir
+    for folder in folder_list:
+        os.makedirs(os.path.join(pt_dir, folder))
+    
+    # load the volumes from images
+
+    # create a list of all of the images in the folders
+    brain_images_list = os.listdir(os.path.join( brain_dir, "imagesTr"))
+    brain_label_list = os.listdir(os.path.join( brain_dir, "labelsTr"))
+    brain_image_list_test = os.listdir(os.path.join( brain_dir, "imagesTs"))
+
+    # start the conversion of training images and training labels.
+
+
+    # save the images in the new file structure
+
+
+    # convert the test images.
+
+
+
+
+
+def train_test_split(root_dir, cfg):
+    pass
+
+
 def main():
     # define the data directory
     with open("config.yml", "r") as ymlfile:
@@ -16,6 +62,8 @@ def main():
     download(root_dir, cfg)
 
     # then extract the data
+
+    # converd the data to pt files.
 
 
 def download(root_dir, cfg):
