@@ -1,8 +1,8 @@
 # DEFINE THE DATA DIRECTORY
 
 data_storage:
-  data_location: "/home/mfmezger/msd/data/"
-  pt_location: "/home/mfmezger/msd/pt/"
+  data_location: "/home/marc/msd/data/"
+  pt_location: "/home/marc/msd/pt/"
 
 aws_links:
   brain_tumor: "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task01_BrainTumour.tar"
