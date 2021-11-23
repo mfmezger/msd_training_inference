@@ -1,6 +1,7 @@
 import os
 
 import yaml
+import torch
 import nibabel as nib
 from monai.apps import download_and_extract
 from pathlib import Path
@@ -9,22 +10,47 @@ from torchio.transforms import ZNormalization
 
 def preprocessing_ct(image):
     """Preprocess the CT images."""
+    # clip values in 0.05 and 99.5 percentile.
+    
+    # do z-score normalization. 
 
-
-    pass
+    image = ZNormalization()(image)
+    return image
 
 def prepocessing_mr(image):
     """Preprocess the MRI images."""
 
     # do z-score normalization.
     # FIXME: is that really the same as Z Score Normalzation?
-    image = ZNormalization(mean=0.0, std=1.0)(image)
+    image = ZNormalization()(image)
+    return image
 
-    pass
+def save_pt(image, save_dir, image_name, mask=None):
+    """Save the images and labels as pytorch files. If without mask it is considered to be the test image and will be stored without a mask."""
 
-def save_pt(image, label, save_dir):
-    """Save the images and labels as pytorch files."""
-    pass
+    if mask is None:
+        image = torch.from_numpy(image)
+
+        image = image.to(torch.float16)
+        image = image.unsqueeze(0)
+
+        path = save_folder + "/" + str(i) + ".pt"
+        torch.save({"vol": image,"id": name.split(".")[0]}, path)
+    else:
+        image = torch.from_numpy(image)
+        mask = torch.from_numpy(mask)
+
+        image = image.to(torch.float16)
+        image = image.unsqueeze(0)
+
+        mask = mask.to(torch.int16)
+        path = save_folder + "/" + str(i) + ".pt"
+        torch.save({"vol": image, "mask": mask, "id": name.split(".")[0]}, path)
+
+        
+
+
+
 
 
 def convert_images(cfg, data_dir, save_dir):
@@ -42,6 +68,7 @@ def convert_images(cfg, data_dir, save_dir):
     if data_dir in ct_list:
         ct_preprocessing_decision = True
     
+    # start the conversion of training images and training labels.
     # load the volumes from images and labels.
     for image, label in zip(images_list, label_list):
         # load the images and labels.
@@ -67,20 +94,30 @@ def convert_images(cfg, data_dir, save_dir):
         # save the images and labels as pytorch files.
         save_pt(image, label, save_dir)
 
-    
-    
-    
-    # create a list of all of the images in the folders
-    
-
-    # start the conversion of training images and training labels.
-
-
     # save the images in the new file structure
 
 
     # convert the test images.
-# the 
+    for image in image_list_test:
+        # load the images and labels.
+        image_path = os.path.join(data_dir, "imagesTs", image)
+
+        # load the images and labels.
+        image = nib.load(image_path)
+        image = image.get_fdata()
+        image = image.transpose(2, 0, 1)
+
+        # choose prepocessing based on the category.
+        if ct_preprocessing_decision:
+            image = preprocessing_ct(image)
+        else:
+            image = preprocessing_mr(image)
+        
+        # save the images and labels as pytorch files.
+        save_pt(image, save_dir)        
+
+
+
 
 def prepare_conversion(cfg):
     """Collect the folders for the creation of the PyTorch files."""
@@ -116,6 +153,18 @@ def prepare_conversion(cfg):
         Path(os.path.join(pt_dir, folder, "train")).mkdir(parents=False, exist_ok=True)
         Path(os.path.join(pt_dir, folder, "test")).mkdir(parents=False, exist_ok=True)
 
+    # start the conversion.
+    convert_images(cfg, brain_dir, os.path.join(pt_dir, "Task01_BrainTumor"))
+    convert_images(cfg, heart_dir, os.path.join(pt_dir, "Task02_Heart"))
+    convert_images(cfg, liver_dir, os.path.join(pt_dir, "Task03_Liver"))
+    convert_images(cfg, hippo_dir, os.path.join(pt_dir, "Task04_Hippocampus"))
+    convert_images(cfg, prostate_dir, os.path.join(pt_dir, "Task05_Prostate"))
+    convert_images(cfg, lung_dir, os.path.join(pt_dir, "Task06_Lung"))
+    convert_images(cfg, pancreas_dir, os.path.join(pt_dir, "Task07_Pancreas"))
+    convert_images(cfg, vessel_dir, os.path.join(pt_dir, "Task08_HepaticVessel"))
+    convert_images(cfg, spleen_dir, os.path.join(pt_dir, "Task09_Spleen"))
+    convert_images(cfg, colon_dir, os.path.join(pt_dir, "Task10_Colon"))
+
 
 
 
@@ -143,7 +192,7 @@ def main():
     download(root_dir, cfg)
 
     # then extract the data
-
+    prepare_conversion(cfg)
     # converd the data to pt files.
 
 
