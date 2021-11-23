@@ -5,7 +5,8 @@ import torch
 import nibabel as nib
 from monai.apps import download_and_extract
 from pathlib import Path
-from torchio.transforms import ZNormalization
+import SimpleITK as sitk
+#from torchio.transforms import ZNormalization
 
 
 def preprocessing_ct(image):
@@ -13,21 +14,19 @@ def preprocessing_ct(image):
     # clip values in 0.05 and 99.5 percentile.
 
     # do z-score normalization. 
-
-    image = ZNormalization()(image)
+    # image = ZNormalization()(image)
     return image
 
 
 def preprocessing_mr(image):
     """Preprocess the MRI images."""
-
     # do z-score normalization.
     # FIXME: is that really the same as Z Score Normalzation?
-    image = ZNormalization()(image)
+    # image = ZNormalization()(image)
     return image
 
 
-def save_pt(image, save_dir, name, mask=None):
+def save_pt(image, name, save_dir, mask=None):
     """Save the images and labels as pytorch files. If without mask it is considered to be the test image and will be stored without a mask."""
 
     if mask is None:
@@ -37,7 +36,7 @@ def save_pt(image, save_dir, name, mask=None):
         image = image.unsqueeze(0)
 
         path = save_dir + "/" + str(name) + ".pt"
-        torch.save({"vol": image, "id": name.split(".")[0]}, path)
+        torch.save({"vol": image, "id": name}, path)
     else:
         image = torch.from_numpy(image)
         mask = torch.from_numpy(mask)
@@ -46,8 +45,8 @@ def save_pt(image, save_dir, name, mask=None):
         image = image.unsqueeze(0)
 
         mask = mask.to(torch.int16)
-        path = save_dir + "/" + str(i) + ".pt"
-        torch.save({"vol": image, "mask": mask, "id": name.split(".")[0]}, path)
+        path = save_dir + "/" + str(name) + ".pt"
+        torch.save({"vol": image, "mask": mask, "id": name}, path)
 
 
 def convert_images(cfg, data_dir, save_dir):
@@ -57,6 +56,11 @@ def convert_images(cfg, data_dir, save_dir):
     label_list = os.listdir(os.path.join(data_dir, "labelsTr"))
     images_list = os.listdir(os.path.join(data_dir, "imagesTr"))
     image_list_test = os.listdir(os.path.join(data_dir, "imagesTs"))
+
+    # remove the data that starts with . from the lists
+    label_list = [x for x in label_list if not x.startswith(".")]
+    images_list = [x for x in images_list if not x.startswith(".")]
+    image_list_test = [x for x in image_list_test if not x.startswith(".")]
 
     # do the preprocessing based on the category.
     ct_list = ["Task03_Liver", "Task06_Lung", "Task07_Pancreas", "Task10_Colon", "Task08_HepaticVessel", "Task09_Spleen"]
@@ -83,7 +87,7 @@ def convert_images(cfg, data_dir, save_dir):
         label = label.transpose(2, 0, 1)
 
         # extract the name of the image.
-        name = image.split("/")[-1]
+        name = image_path.split("/")[-1].split(".")[0]
 
         # choose prepocessing based on the category.
         if ct_preprocessing_decision:
@@ -92,7 +96,7 @@ def convert_images(cfg, data_dir, save_dir):
             image = preprocessing_mr(image)
 
         # save the images and labels as pytorch files.
-        save_pt(image, name, save_dir, label)
+        save_pt(image, name, save_dir+"/train", label)
 
     # save the images in the new file structure
 
@@ -100,6 +104,9 @@ def convert_images(cfg, data_dir, save_dir):
     for image in image_list_test:
         # load the images and labels.
         image_path = os.path.join(data_dir, "imagesTs", image)
+
+        # extract the name of the image.
+        name = image_path.split("/")[-1].split(".")[0]
 
         # load the images and labels.
         image = nib.load(image_path)
@@ -113,7 +120,7 @@ def convert_images(cfg, data_dir, save_dir):
             image = preprocessing_mr(image)
 
         # save the images and labels as pytorch files.
-        save_pt(image, name, save_dir)
+        save_pt(image, name, save_dir+"/test")
 
 
 def prepare_conversion(cfg):

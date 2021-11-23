@@ -5,7 +5,7 @@ data_storage:
   pt_location: "/home/marc/msd/pt/"
 
 aws_links:
-  brain_tumor: "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task01_BrainTumour.tar"
+  brain: "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task01_BrainTumour.tar"
   heart: "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task02_Heart.tar"
   liver: "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task03_Liver.tar"
   hippo: "https://msd-for-monai.s3-us-west-2.amazonaws.com/Task04_Hippocampus.tar"
