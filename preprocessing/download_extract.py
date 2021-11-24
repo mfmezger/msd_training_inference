@@ -6,7 +6,7 @@ import nibabel as nib
 from monai.apps import download_and_extract
 from pathlib import Path
 import SimpleITK as sitk
-#from torchio.transforms import ZNormalization
+# from torchio.transforms import ZNormalization
 
 
 def preprocessing_ct(image):
@@ -32,8 +32,8 @@ def save_pt(image, name, save_dir, mask=None):
     if mask is None:
         image = torch.from_numpy(image)
 
-        image = image.to(torch.float16)
-        image = image.unsqueeze(0)
+        #image = image.to(torch.float16)
+        #image = image.unsqueeze(0)
 
         path = save_dir + "/" + str(name) + ".pt"
         torch.save({"vol": image, "id": name}, path)
@@ -41,10 +41,10 @@ def save_pt(image, name, save_dir, mask=None):
         image = torch.from_numpy(image)
         mask = torch.from_numpy(mask)
 
-        image = image.to(torch.float16)
-        image = image.unsqueeze(0)
+        #image = image.to(torch.float16)
+        #image = image.unsqueeze(0)
 
-        mask = mask.to(torch.int16)
+        #mask = mask.to(torch.int16)
         path = save_dir + "/" + str(name) + ".pt"
         torch.save({"vol": image, "mask": mask, "id": name}, path)
 
@@ -79,12 +79,18 @@ def convert_images(cfg, data_dir, save_dir):
         image = nib.load(image_path)
         label = nib.load(label_path)
 
-        # get image data and transpose to fit ZXY.
         image = image.get_fdata()
-        image = image.transpose(2, 0, 1)
-
         label = label.get_fdata()
-        label = label.transpose(2, 0, 1)
+        # check for the datasets with more than 3 dimensions
+        if len(image.shape) > 3:
+            image = image.transpose(3, 2, 0, 1)
+            label = label.transpose(2, 0, 1)
+
+        else:
+            # get image data and transpose to fit ZXY.
+            image = image.transpose(2, 0, 1)
+
+            label = label.transpose(2, 0, 1)
 
         # extract the name of the image.
         name = image_path.split("/")[-1].split(".")[0]
@@ -111,7 +117,14 @@ def convert_images(cfg, data_dir, save_dir):
         # load the images and labels.
         image = nib.load(image_path)
         image = image.get_fdata()
-        image = image.transpose(2, 0, 1)
+
+        if len(image.shape) > 2:
+            image = image.transpose(3, 2, 0, 1)
+
+        else:
+            # get image data and transpose to fit ZXY.
+            image = image.transpose(2, 0, 1)
+
 
         # choose prepocessing based on the category.
         if ct_preprocessing_decision:
@@ -157,7 +170,7 @@ def prepare_conversion(cfg):
         Path(os.path.join(pt_dir, folder, "test")).mkdir(parents=False, exist_ok=True)
 
     # start the conversion.
-    # convert_images(cfg, brain_dir, os.path.join(pt_dir, "Task01_BrainTumor"))
+    convert_images(cfg, brain_dir, os.path.join(pt_dir, "Task01_BrainTumor"))
     convert_images(cfg, heart_dir, os.path.join(pt_dir, "Task02_Heart"))
     # convert_images(cfg, liver_dir, os.path.join(pt_dir, "Task03_Liver"))
     # convert_images(cfg, hippo_dir, os.path.join(pt_dir, "Task04_Hippocampus"))
@@ -204,10 +217,10 @@ def download(root_dir, cfg):
     get_colon_aws = cfg["aws_links"]["colon"]
 
     # Brain Tumor
-    # compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
-    # data_dir = os.path.join(root_dir, "Task01_BrainTumour")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_brain_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
+    data_dir = os.path.join(root_dir, "Task01_BrainTumour")
+    if not os.path.exists(data_dir):
+        download_and_extract(get_brain_aws, compressed_file, root_dir)
     # Heart
     compressed_file = os.path.join(root_dir, "Task02_Heart.tar")
     data_dir = os.path.join(root_dir, "Task02_Heart")
