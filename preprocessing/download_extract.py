@@ -147,17 +147,7 @@ def prepare_conversion(cfg):
     Path(root_dir).mkdir(parents=False, exist_ok=True)
     Path(pt_dir).mkdir(parents=False, exist_ok=True)
 
-    # select the folders to convert to pt
-    brain_dir = os.path.join(root_dir, "Task01_BrainTumour")
-    heart_dir = os.path.join(root_dir, "Task02_Heart")
-    liver_dir = os.path.join(root_dir, "Task03_Liver")
-    hippo_dir = os.path.join(root_dir, "Task04_Hippocampus")
-    prostate_dir = os.path.join(root_dir, "Task05_Prostate")
-    lung_dir = os.path.join(root_dir, "Task06_Lung")
-    pancreas_dir = os.path.join(root_dir, "Task07_Pancreas")
-    vessel_dir = os.path.join(root_dir, "Task08_HepaticVessel")
-    spleen_dir = os.path.join(root_dir, "Task09_Spleen")
-    colon_dir = os.path.join(root_dir, "Task10_Colon")
+    brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
 
     # create new folders from names for the tasks
     folder_list = ["Task01_BrainTumor", "Task02_Heart", "Task03_Liver", "Task04_Hippocampus", "Task05_Prostate", "Task06_Lung", "Task07_Pancreas", "Task08_HepaticVessel",
@@ -170,20 +160,41 @@ def prepare_conversion(cfg):
         Path(os.path.join(pt_dir, folder, "train")).mkdir(parents=False, exist_ok=True)
         Path(os.path.join(pt_dir, folder, "test")).mkdir(parents=False, exist_ok=True)
 
-    # start the conversion.
-    # convert_images(cfg, brain_dir, os.path.join(pt_dir, "Task01_BrainTumor"))
-    # convert_images(cfg, heart_dir, os.path.join(pt_dir, "Task02_Heart"))
-    # convert_images(cfg, liver_dir, os.path.join(pt_dir, "Task03_Liver"))
-    # convert_images(cfg, hippo_dir, os.path.join(pt_dir, "Task04_Hippocampus"))
-    # convert_images(cfg, prostate_dir, os.path.join(pt_dir, "Task05_Prostate"))
-    # convert_images(cfg, lung_dir, os.path.join(pt_dir, "Task06_Lung"))
-    # convert_images(cfg, pancreas_dir, os.path.join(pt_dir, "Task07_Pancreas"))
-    # convert_images(cfg, vessel_dir, os.path.join(pt_dir, "Task08_HepaticVessel"))
-    # convert_images(cfg, spleen_dir, os.path.join(pt_dir, "Task09_Spleen"))
-    # convert_images(cfg, colon_dir, os.path.join(pt_dir, "Task10_Colon"))
+    # start the conversion to pt files.
+    convert_images(cfg, brain_dir, os.path.join(pt_dir, "Task01_BrainTumor"))
+    convert_images(cfg, heart_dir, os.path.join(pt_dir, "Task02_Heart"))
+    convert_images(cfg, liver_dir, os.path.join(pt_dir, "Task03_Liver"))
+    convert_images(cfg, hippo_dir, os.path.join(pt_dir, "Task04_Hippocampus"))
+    convert_images(cfg, prostate_dir, os.path.join(pt_dir, "Task05_Prostate"))
+    convert_images(cfg, lung_dir, os.path.join(pt_dir, "Task06_Lung"))
+    convert_images(cfg, pancreas_dir, os.path.join(pt_dir, "Task07_Pancreas"))
+    convert_images(cfg, vessel_dir, os.path.join(pt_dir, "Task08_HepaticVessel"))
+    convert_images(cfg, spleen_dir, os.path.join(pt_dir, "Task09_Spleen"))
+    convert_images(cfg, colon_dir, os.path.join(pt_dir, "Task10_Colon"))
+
+
+def get_folders(root_dir):
+    # select the folders to convert to pt
+    brain_dir = os.path.join(root_dir, "Task01_BrainTumour")
+    heart_dir = os.path.join(root_dir, "Task02_Heart")
+    liver_dir = os.path.join(root_dir, "Task03_Liver")
+    hippo_dir = os.path.join(root_dir, "Task04_Hippocampus")
+    prostate_dir = os.path.join(root_dir, "Task05_Prostate")
+    lung_dir = os.path.join(root_dir, "Task06_Lung")
+    pancreas_dir = os.path.join(root_dir, "Task07_Pancreas")
+    vessel_dir = os.path.join(root_dir, "Task08_HepaticVessel")
+    spleen_dir = os.path.join(root_dir, "Task09_Spleen")
+    colon_dir = os.path.join(root_dir, "Task10_Colon")
+    return brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir
 
 
 def train_test_split(root_dir, cfg):
+    brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
+
+    # get in every folder, randomly select 30% and move them to an extra validation folder. (move, not copy)
+
+
+
     pass
 
 
@@ -202,7 +213,11 @@ def main():
 
     # then extract the data
     prepare_conversion(cfg)
-    # converd the data to pt files.
+
+
+    # start the train val split.
+    train_test_split()
+
 
 
 def download(root_dir, cfg):
