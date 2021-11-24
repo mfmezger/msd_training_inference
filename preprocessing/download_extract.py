@@ -1,13 +1,14 @@
 import os
-
+from monai.apps.utils import download_url
+import urllib
 import yaml
 import torch
 import nibabel as nib
-from monai.apps import download_and_extract
+from monai.apps import extractall
 from pathlib import Path
 import SimpleITK as sitk
 # from torchio.transforms import ZNormalization
-
+from parallel_sync import wget
 
 def preprocessing_ct(image):
     """Preprocess the CT images."""
@@ -170,8 +171,8 @@ def prepare_conversion(cfg):
         Path(os.path.join(pt_dir, folder, "test")).mkdir(parents=False, exist_ok=True)
 
     # start the conversion.
-    convert_images(cfg, brain_dir, os.path.join(pt_dir, "Task01_BrainTumor"))
-    convert_images(cfg, heart_dir, os.path.join(pt_dir, "Task02_Heart"))
+    # convert_images(cfg, brain_dir, os.path.join(pt_dir, "Task01_BrainTumor"))
+    # convert_images(cfg, heart_dir, os.path.join(pt_dir, "Task02_Heart"))
     # convert_images(cfg, liver_dir, os.path.join(pt_dir, "Task03_Liver"))
     # convert_images(cfg, hippo_dir, os.path.join(pt_dir, "Task04_Hippocampus"))
     # convert_images(cfg, prostate_dir, os.path.join(pt_dir, "Task05_Prostate"))
@@ -219,53 +220,64 @@ def download(root_dir, cfg):
     # Brain Tumor
     compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
     data_dir = os.path.join(root_dir, "Task01_BrainTumour")
-    if not os.path.exists(data_dir):
-        download_and_extract(get_brain_aws, compressed_file, root_dir)
+    if not os.path.exists(compressed_file):
+        wget.download(get_brain_aws, compressed_file)
+        extractall(get_brain_aws, compressed_file, data_dir)
+    
     # Heart
     compressed_file = os.path.join(root_dir, "Task02_Heart.tar")
     data_dir = os.path.join(root_dir, "Task02_Heart")
-    if not os.path.exists(data_dir):
-        download_and_extract(get_heart_aws, compressed_file, root_dir)
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_heart_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task03_Liver.tar")
-    # data_dir = os.path.join(root_dir, "Task03_Liver")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_liver_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task03_Liver.tar")
+    data_dir = os.path.join(root_dir, "Task03_Liver")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_liver_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task04_Hippocampus.tar")
-    # data_dir = os.path.join(root_dir, "Task04_Hippocampus")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_hippo_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task04_Hippocampus.tar")
+    data_dir = os.path.join(root_dir, "Task04_Hippocampus")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_hippo_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task05_Prostate.tar")
-    # data_dir = os.path.join(root_dir, "Task05_Prostate")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_prostata_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task05_Prostate.tar")
+    data_dir = os.path.join(root_dir, "Task05_Prostate")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_prostata_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task06_Lung.tar")
-    # data_dir = os.path.join(root_dir, "Task06_Lung")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_lung_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task06_Lung.tar")
+    data_dir = os.path.join(root_dir, "Task06_Lung")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_lung_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task07_Pancreas.tar")
-    # data_dir = os.path.join(root_dir, "Task07_Pancreas")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_pancreas_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task07_Pancreas.tar")
+    data_dir = os.path.join(root_dir, "Task07_Pancreas")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_pancreas_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task08_HepaticVessel.tar")
-    # data_dir = os.path.join(root_dir, "Task08_HepaticVessel")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_vessel_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task08_HepaticVessel.tar")
+    data_dir = os.path.join(root_dir, "Task08_HepaticVessel")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_vessel_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task09_Spleen.tar")
-    # data_dir = os.path.join(root_dir, "Task09_Spleen")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_spleen_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task09_Spleen.tar")
+    data_dir = os.path.join(root_dir, "Task09_Spleen")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_spleen_aws)
+        extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task10_Colon.tar")
-    # data_dir = os.path.join(root_dir, "Task10_Colon")
-    # if not os.path.exists(data_dir):
-    #     download_and_extract(get_colon_aws, compressed_file, root_dir)
+    compressed_file = os.path.join(root_dir, "Task10_Colon.tar")
+    data_dir = os.path.join(root_dir, "Task10_Colon")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_colon_aws)
+        extractall(compressed_file, data_dir)
 
 
 if __name__ == "__main__":
