@@ -193,11 +193,11 @@ def train_test_split(cfg):
     brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
 
     # get in every folder, randomly select 30% and move them to an extra validation folder. (move, not copy)
-    for f in [ heart_dir]:#,brain_dir, colon_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir]:
+    for f in [heart_dir, brain_dir, colon_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir]:
         # create new val folder.
         Path(os.path.join(f, "validation")).mkdir(parents=False, exist_ok=True)
         # get the list of files in the folder.
-        file_list = os.listdir(os.path.join(f,"train",))
+        file_list = os.listdir(os.path.join(f, "train", ))
         # get the number of files in the folder.
         file_number = len(file_list)
         # get the number of files to move.
@@ -206,7 +206,7 @@ def train_test_split(cfg):
         move_list = random.sample(file_list, move_number)
         # move the files to the validation folder.
         for file in move_list:
-            shutil.move(os.path.join(f, "train",file), os.path.join(f, "validation"))
+            shutil.move(os.path.join(f, "train", file), os.path.join(f, "validation"))
 
 
 def main():
@@ -219,10 +219,10 @@ def main():
     root_dir = cfg["data_storage"]["data_location"]
 
     # start by downloading the data
-    # download(root_dir, cfg)
+    download(root_dir, cfg)
 
     # then extract the data
-    # prepare_conversion(cfg)
+    prepare_conversion(cfg)
 
     # start the train val split.
     train_test_split(cfg)
@@ -241,11 +241,11 @@ def download(root_dir, cfg):
     get_colon_aws = cfg["aws_links"]["colon"]
 
     # Brain Tumor
-    # compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
-    # data_dir = os.path.join(root_dir, "Task01_BrainTumour")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(get_brain_aws, compressed_file)
-    #     extractall(get_brain_aws, compressed_file, data_dir)
+    compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
+    data_dir = os.path.join(root_dir, "Task01_BrainTumour")
+    if not os.path.exists(compressed_file):
+        wget.download(get_brain_aws, compressed_file)
+        extractall(get_brain_aws, compressed_file, data_dir)
 
     # Heart
     compressed_file = os.path.join(root_dir, "Task02_Heart.tar")
@@ -254,53 +254,53 @@ def download(root_dir, cfg):
         wget.download(root_dir, get_heart_aws)
         extractall(compressed_file, data_dir)
 
-    # compressed_file = os.path.join(root_dir, "Task03_Liver.tar")
-    # data_dir = os.path.join(root_dir, "Task03_Liver")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_liver_aws)
-    #     extractall(compressed_file, data_dir)
-    #
-    # compressed_file = os.path.join(root_dir, "Task04_Hippocampus.tar")
-    # data_dir = os.path.join(root_dir, "Task04_Hippocampus")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_hippo_aws)
-    #     extractall(compressed_file, data_dir)
-    #
-    # compressed_file = os.path.join(root_dir, "Task05_Prostate.tar")
-    # data_dir = os.path.join(root_dir, "Task05_Prostate")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_prostata_aws)
-    #     extractall(compressed_file, data_dir)
-    #
-    # compressed_file = os.path.join(root_dir, "Task06_Lung.tar")
-    # data_dir = os.path.join(root_dir, "Task06_Lung")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_lung_aws)
-    #     extractall(compressed_file, data_dir)
-    #
-    # compressed_file = os.path.join(root_dir, "Task07_Pancreas.tar")
-    # data_dir = os.path.join(root_dir, "Task07_Pancreas")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_pancreas_aws)
-    #     extractall(compressed_file, data_dir)
-    #
-    # compressed_file = os.path.join(root_dir, "Task08_HepaticVessel.tar")
-    # data_dir = os.path.join(root_dir, "Task08_HepaticVessel")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_vessel_aws)
-    #     extractall(compressed_file, data_dir)
-    #
-    # compressed_file = os.path.join(root_dir, "Task09_Spleen.tar")
-    # data_dir = os.path.join(root_dir, "Task09_Spleen")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_spleen_aws)
-    #     extractall(compressed_file, data_dir)
-    #
-    # compressed_file = os.path.join(root_dir, "Task10_Colon.tar")
-    # data_dir = os.path.join(root_dir, "Task10_Colon")
-    # if not os.path.exists(compressed_file):
-    #     wget.download(root_dir, get_colon_aws)
-    #     extractall(compressed_file, data_dir)
+    compressed_file = os.path.join(root_dir, "Task03_Liver.tar")
+    data_dir = os.path.join(root_dir, "Task03_Liver")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_liver_aws)
+        extractall(compressed_file, data_dir)
+
+    compressed_file = os.path.join(root_dir, "Task04_Hippocampus.tar")
+    data_dir = os.path.join(root_dir, "Task04_Hippocampus")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_hippo_aws)
+        extractall(compressed_file, data_dir)
+
+    compressed_file = os.path.join(root_dir, "Task05_Prostate.tar")
+    data_dir = os.path.join(root_dir, "Task05_Prostate")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_prostata_aws)
+        extractall(compressed_file, data_dir)
+
+    compressed_file = os.path.join(root_dir, "Task06_Lung.tar")
+    data_dir = os.path.join(root_dir, "Task06_Lung")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_lung_aws)
+        extractall(compressed_file, data_dir)
+
+    compressed_file = os.path.join(root_dir, "Task07_Pancreas.tar")
+    data_dir = os.path.join(root_dir, "Task07_Pancreas")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_pancreas_aws)
+        extractall(compressed_file, data_dir)
+
+    compressed_file = os.path.join(root_dir, "Task08_HepaticVessel.tar")
+    data_dir = os.path.join(root_dir, "Task08_HepaticVessel")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_vessel_aws)
+        extractall(compressed_file, data_dir)
+
+    compressed_file = os.path.join(root_dir, "Task09_Spleen.tar")
+    data_dir = os.path.join(root_dir, "Task09_Spleen")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_spleen_aws)
+        extractall(compressed_file, data_dir)
+
+    compressed_file = os.path.join(root_dir, "Task10_Colon.tar")
+    data_dir = os.path.join(root_dir, "Task10_Colon")
+    if not os.path.exists(compressed_file):
+        wget.download(root_dir, get_colon_aws)
+        extractall(compressed_file, data_dir)
 
 
 if __name__ == "__main__":
