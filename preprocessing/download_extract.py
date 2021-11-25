@@ -191,11 +191,22 @@ def get_folders(root_dir):
 def train_test_split(root_dir, cfg):
     brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
 
+    
     # get in every folder, randomly select 30% and move them to an extra validation folder. (move, not copy)
-
-
-
-    pass
+    for f in  [brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir]:
+        # create new val folder.
+        Path(os.path.join(f, "validation")).mkdir(parents=False, exist_ok=True)
+        # get the list of files in the folder.
+        file_list = os.listdir(f)
+        # get the number of files in the folder.
+        file_number = len(file_list)
+        # get the number of files to move.
+        move_number = int(file_number * 0.3)
+        # get the list of files to move.
+        move_list = random.sample(file_list, move_number)
+        # move the files to the validation folder.
+        for file in move_list:
+            shutil.move(os.path.join(f, file), os.path.join(f, "validation"))
 
 
 def main():
