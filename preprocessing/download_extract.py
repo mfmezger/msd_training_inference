@@ -31,23 +31,21 @@ def preprocessing_mr(image):
 def save_pt(image, name, save_dir, mask=None):
     """Save the images and labels as pytorch files. If without mask it is considered to be the test image and will be stored without a mask."""
 
+    # checking if train with mask or test without mask.
     if mask is None:
         image = torch.from_numpy(image)
 
-        # image = image.to(torch.float16)
-        # image = image.unsqueeze(0)
-
-        path = save_dir + "/" + str(name) + ".pt"
+        #path = save_dir + "/" + str(name) + ".pt"
+        path = os.path.join(save_dir, str(name) + ".pt")
+        
         torch.save({"vol": image, "id": name}, path)
     else:
         image = torch.from_numpy(image)
         mask = torch.from_numpy(mask)
 
-        # image = image.to(torch.float16)
-        # image = image.unsqueeze(0)
-
-        # mask = mask.to(torch.int16)
-        path = save_dir + "/" + str(name) + ".pt"
+        #path = save_dir + "/" + str(name) + ".pt"
+        path = os.path.join(save_dir, str(name) + ".pt")
+        
         torch.save({"vol": image, "mask": mask, "id": name}, path)
 
 
@@ -147,6 +145,7 @@ def prepare_conversion(cfg):
     Path(root_dir).mkdir(parents=False, exist_ok=True)
     Path(pt_dir).mkdir(parents=False, exist_ok=True)
 
+    # retrive folder names.
     brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
 
     # create new folders from names for the tasks
@@ -174,7 +173,8 @@ def prepare_conversion(cfg):
 
 
 def get_folders(root_dir):
-    # select the folders to convert to pt
+    """Return the folder locations."""
+    
     brain_dir = os.path.join(root_dir, "Task01_BrainTumour")
     heart_dir = os.path.join(root_dir, "Task02_Heart")
     liver_dir = os.path.join(root_dir, "Task03_Liver")
@@ -189,6 +189,7 @@ def get_folders(root_dir):
 
 
 def train_test_split(cfg):
+    """Split the training data randomly in train and validation based on a   70%/30% split."""
     root_dir = cfg["data_storage"]["pt_location"]
     brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
 
@@ -214,8 +215,6 @@ def main():
     with open("config.yml", "r") as ymlfile:
         cfg = yaml.safe_load(ymlfile)
 
-    # TODO create the folders for the data.
-
     root_dir = cfg["data_storage"]["data_location"]
 
     # start by downloading the data
@@ -229,6 +228,7 @@ def main():
 
 
 def download(root_dir, cfg):
+    """Download the data from AWS Open Data Repository."""
     get_brain_aws = cfg["aws_links"]["brain"]
     get_heart_aws = cfg["aws_links"]["heart"]
     get_liver_aws = cfg["aws_links"]["liver"]
@@ -254,48 +254,56 @@ def download(root_dir, cfg):
         wget.download(root_dir, get_heart_aws)
         extractall(compressed_file, data_dir)
 
+    # Liver
     compressed_file = os.path.join(root_dir, "Task03_Liver.tar")
     data_dir = os.path.join(root_dir, "Task03_Liver")
     if not os.path.exists(compressed_file):
         wget.download(root_dir, get_liver_aws)
         extractall(compressed_file, data_dir)
 
+    # Hippocampus
     compressed_file = os.path.join(root_dir, "Task04_Hippocampus.tar")
     data_dir = os.path.join(root_dir, "Task04_Hippocampus")
     if not os.path.exists(compressed_file):
         wget.download(root_dir, get_hippo_aws)
         extractall(compressed_file, data_dir)
 
+    # Prostata
     compressed_file = os.path.join(root_dir, "Task05_Prostate.tar")
     data_dir = os.path.join(root_dir, "Task05_Prostate")
     if not os.path.exists(compressed_file):
         wget.download(root_dir, get_prostata_aws)
         extractall(compressed_file, data_dir)
 
+    # Lung
     compressed_file = os.path.join(root_dir, "Task06_Lung.tar")
     data_dir = os.path.join(root_dir, "Task06_Lung")
     if not os.path.exists(compressed_file):
         wget.download(root_dir, get_lung_aws)
         extractall(compressed_file, data_dir)
 
+    # Pancreas
     compressed_file = os.path.join(root_dir, "Task07_Pancreas.tar")
     data_dir = os.path.join(root_dir, "Task07_Pancreas")
     if not os.path.exists(compressed_file):
         wget.download(root_dir, get_pancreas_aws)
         extractall(compressed_file, data_dir)
 
+    # Hepatic Vessel
     compressed_file = os.path.join(root_dir, "Task08_HepaticVessel.tar")
     data_dir = os.path.join(root_dir, "Task08_HepaticVessel")
     if not os.path.exists(compressed_file):
         wget.download(root_dir, get_vessel_aws)
         extractall(compressed_file, data_dir)
 
+    # Spleen
     compressed_file = os.path.join(root_dir, "Task09_Spleen.tar")
     data_dir = os.path.join(root_dir, "Task09_Spleen")
     if not os.path.exists(compressed_file):
         wget.download(root_dir, get_spleen_aws)
         extractall(compressed_file, data_dir)
 
+    # Colon
     compressed_file = os.path.join(root_dir, "Task10_Colon.tar")
     data_dir = os.path.join(root_dir, "Task10_Colon")
     if not os.path.exists(compressed_file):
