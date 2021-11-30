@@ -1,6 +1,5 @@
 import torch
 import pandas
-from autoencoder import AutoEncoder
 from DataFrameDataset import DataFrameDataSet
 from monai.networks.nets import UNet
 
@@ -13,8 +12,8 @@ learning_rate = 1e-3
 def main():
     # read the data.
 
-    # define DataSet and DataLoader.
-
+    # TODO: define DataSet and DataLoader.
+    # TODO: switch between tasks.
     #  use gpu if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -43,10 +42,10 @@ def main():
             optimizer.zero_grad()
             
             # compute reconstructions
-            outputs = model(batch_features)
+            outputs = model(img)
             
             # compute training reconstruction loss
-            train_loss = criterion(outputs, batch_features)
+            train_loss = criterion(outputs, mask)
             
             # compute accumulated gradients
             train_loss.backward()
@@ -56,6 +55,10 @@ def main():
             
             # add the mini-batch training loss to epoch loss
             loss += train_loss.item()
+
+
+            
+            # TODO Logging.
     
     # compute the epoch training loss
     loss = loss / len(train_loader)

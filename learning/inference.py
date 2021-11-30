@@ -13,7 +13,7 @@ learning_rate = 1e-3
 def main():
     # read the data.
 
-    # define DataSet and DataLoader.
+    # TODO: define DataSet and DataLoader.
 
     #  use gpu if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
