@@ -14,6 +14,8 @@ def main():
     # read the data.
 
     # TODO: define DataSet and DataLoader.
+    # create PTDataset.
+    
 
     #  use gpu if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -25,20 +27,16 @@ def main():
     # make epoch dependable on dataloader
     for epoch in range(epochs):
         loss = 0
-        for batch_features, _ in train_loader:
-            # reshape mini-batch data to [N, 784] matrix
-            # load it to the active device
-            batch_features = batch_features.view(-1, 784).to(device)
-            
-            # reset the gradients back to zero
-            # PyTorch accumulates gradients on subsequent backward passes
-            optimizer.zero_grad()
+        for x,y in test_loader:
+            x = x.to(device)
+            y = y.to(device)
+
             
             # compute reconstructions
-            outputs = model(batch_features)
+            outputs = model(x)
             
             # compute training reconstruction loss
-            train_loss = criterion(outputs, batch_features)
+            train_loss = criterion(outputs, y)
             
             # compute accumulated gradients
             train_loss.backward()

@@ -241,18 +241,19 @@ def download(root_dir, cfg):
     get_colon_aws = cfg["aws_links"]["colon"]
 
     # Brain Tumor
-    compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
-    data_dir = os.path.join(root_dir, "Task01_BrainTumour")
-    if not os.path.exists(compressed_file):
-        wget.download(get_brain_aws, compressed_file)
-        extractall(get_brain_aws, compressed_file, data_dir)
+    # compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
+    # data_dir = os.path.join(root_dir, "Task01_BrainTumour")
+    # if not os.path.exists(compressed_file):
+    #     wget.download(get_brain_aws, compressed_file)
+    #     extractall(get_brain_aws, compressed_file, data_dir)
 
     # Heart
-    compressed_file = os.path.join(root_dir, "Task02_Heart.tar")
-    data_dir = os.path.join(root_dir, "Task02_Heart")
-    if not os.path.exists(compressed_file):
-        wget.download(root_dir, get_heart_aws)
-        extractall(compressed_file, data_dir)
+    # FIXME: there is the Tas02 folder twice when generating the subsystem.
+    # compressed_file = os.path.join(root_dir, "Task02_Heart.tar")
+    # data_dir = os.path.join(root_dir, "Task02_Heart")
+    # if not os.path.exists(compressed_file):
+    #     wget.download(root_dir, get_heart_aws)
+    #     extractall(compressed_file, data_dir)
 
     # Liver
     compressed_file = os.path.join(root_dir, "Task03_Liver.tar")

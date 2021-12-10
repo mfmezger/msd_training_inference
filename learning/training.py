@@ -3,6 +3,8 @@ import pandas
 from DataFrameDataset import DataFrameDataSet
 from monai.networks.nets import UNet
 
+
+
 # hyperparameters
 batch_size = 512
 epochs = 2000
@@ -33,7 +35,6 @@ def main():
     for epoch in range(epochs):
         loss = 0
         for img, mask in train_loader:
-            # reshape mini-batch data to [N, 784] matrix
             # load it to the active device
             img = img.to(device)            
             mask = mask.to(device)             
@@ -58,7 +59,7 @@ def main():
 
 
             
-            # TODO Logging.
+            # TODO: Logging.
     
     # compute the epoch training loss
     loss = loss / len(train_loader)
