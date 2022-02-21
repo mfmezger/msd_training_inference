@@ -16,6 +16,12 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
 
 ## Usage
 
+### Preprocessing
+The script 'download_extract.py' in the preprocessing folder downloads the Medical Segmentation Dataset from the AWS Open Data Repository. You can change between US and Europe AWS Servers.
+
+### Training
+The script 'training.py' in the learning folder trains the model. You can change the model type, the number of epochs, the batch size, the learning rate, the number of workers and 
+
 
 ## Credits
 Implementation by Marc Fabian Mezger (@mfmezger) https://github.com/mfmezger

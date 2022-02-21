@@ -229,16 +229,25 @@ def main():
 
 def download(root_dir, cfg):
     """Download the data from AWS Open Data Repository."""
-    get_brain_aws = cfg["aws_links"]["brain"]
-    get_heart_aws = cfg["aws_links"]["heart"]
-    get_liver_aws = cfg["aws_links"]["liver"]
-    get_hippo_aws = cfg["aws_links"]["hippo"]
-    get_prostata_aws = cfg["aws_links"]["prostata"]
-    get_lung_aws = cfg["aws_links"]["lung"]
-    get_pancreas_aws = cfg["aws_links"]["pancreas"]
-    get_vessel_aws = cfg["aws_links"]["vessel"]
-    get_spleen_aws = cfg["aws_links"]["spleen"]
-    get_colon_aws = cfg["aws_links"]["colon"]
+
+    # check if EU or NA server should be used.
+
+    if cfg["data_storage"]["server"] == "EU":
+        aws_links = "aws_links_EU"
+    if cfg["data_storage"]["server"] == "NA":
+        aws_links = "aws_links_NA"
+
+
+    get_brain_aws = cfg[aws_links]["brain"]
+    get_heart_aws = cfg[aws_links]["heart"]
+    get_liver_aws = cfg[aws_links]["liver"]
+    get_hippo_aws = cfg[aws_links]["hippo"]
+    get_prostata_aws = cfg[aws_links]["prostata"]
+    get_lung_aws = cfg[aws_links]["lung"]
+    get_pancreas_aws = cfg[aws_links]["pancreas"]
+    get_vessel_aws = cfg[aws_links]["vessel"]
+    get_spleen_aws = cfg[aws_links]["spleen"]
+    get_colon_aws = cfg[aws_links]["colon"]
 
     # Brain Tumor
     # compressed_file = os.path.join(root_dir, "Task01_BrainTumour.tar")
@@ -248,7 +257,7 @@ def download(root_dir, cfg):
     #     extractall(get_brain_aws, compressed_file, data_dir)
 
     # Heart
-    # FIXME: there is the Tas02 folder twice when generating the subsystem.
+    # FIXME: there is the Task02 folder twice when generating the subsystem.
     # compressed_file = os.path.join(root_dir, "Task02_Heart.tar")
     # data_dir = os.path.join(root_dir, "Task02_Heart")
     # if not os.path.exists(compressed_file):
