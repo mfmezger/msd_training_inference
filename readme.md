@@ -1,11 +1,25 @@
-## README
+# README
 
 
-# Data Source
+## Data Source
 
 Medical Segmentation Decathlon http://medicaldecathlon.com/
 
- 
+## TODOS
+
+ - [ ] Z Normalisation
+ - [ ] Add more metrics
+ - [ ] Test on server.
+
+## Installation
+
+
+## Usage
+
+
+## Credits
+Implementation by Marc Fabian Mezger (@mfmezger) https://github.com/mfmezger
+
 
 # Fragen für SambaNova
 * Data augmentation on GPU possible? -> compile that or inefficient and better done on CPU?
