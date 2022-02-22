@@ -1,0 +1,7 @@
+torch
+monai
+numpy
+parallel_sync
+simpleitk
+nibabel
+pandas

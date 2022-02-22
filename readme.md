@@ -10,6 +10,10 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
  - [ ] Z Normalisation
  - [ ] Add more metrics
  - [ ] Test on server.
+ - [ ] Inference Script
+ - [ ] WandB and Logging
+ - [ ] Training routine regarding imaging size and so on.
+
 
 ## Installation
 

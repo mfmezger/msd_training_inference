@@ -25,39 +25,16 @@ def main():
 
     # start the training.
     # make epoch dependable on dataloader
-    for epoch in range(epochs):
-        loss = 0
-        for x,y in test_loader:
-            x = x.to(device)
-            y = y.to(device)
+    for x, name in test_loader:
+        x = x.to(device)
 
             
-            # compute reconstructions
-            outputs = model(x)
-            
-            # compute training reconstruction loss
-            train_loss = criterion(outputs, y)
-            
-            # compute accumulated gradients
-            train_loss.backward()
-            
-            # perform parameter update based on current gradients
-            optimizer.step()
-            
-            # add the mini-batch training loss to epoch loss
-            loss += train_loss.item()
+        # predict segmentation.
+        outputs = model(x)
+
+        # save the outputs to pt files.
+        torch.save({"vol": outputs, "name": name}, "./outputs/" + name)
     
-    # compute the epoch training loss
-    loss = loss / len(train_loader)
-    
-    # display the epoch training loss
-    print("epoch : {}/{}, recon loss = {:.8f}".format(epoch + 1, epochs, loss))
-
-
-    # test the model.
-
-
-    # find a fitting threshold.
 
 
 
