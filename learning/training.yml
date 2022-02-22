@@ -1,0 +1,20 @@
+# DEFINE THE DATA DIRECTORY
+data_storage:
+  data_location_training: "/home/marc/msd/data/"
+  data_location_test: "/home/marc/msd/data/"
+  data_location_saving_test_data: "/home/marc/msd/results/"
+
+
+# define the hyperparameters.
+hyper_parameters:
+  # logging
+  logging_wandb: True
+  logging_tensorboard: False
+  logging_csv: False
+
+  # training
+  batch_size: 32
+  num_epochs: 100
+  num_workers: 0
+  lr: 0.001
+

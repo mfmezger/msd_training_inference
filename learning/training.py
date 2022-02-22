@@ -2,17 +2,25 @@ import torch
 import pandas
 from DataFrameDataset import DataFrameDataSet
 from monai.networks.nets import UNet
+import yaml
 
 
 
-# hyperparameters
-batch_size = 512
-epochs = 2000
-learning_rate = 1e-3
 
 
 def main():
     # read the data.
+    # define the data directory
+    with open("config.yml", "r") as ymlfile:
+        cfg = yaml.safe_load(ymlfile)
+
+    # hyperparameters from training.yml
+    batch_size = cfg["hyper_parameters"]["batch_size"]
+    epochs = cfg["hyper_parameters"]["epochs"]
+    learning_rate = cfg["hyper_parameters"]["lr"]
+    num_workers = cfg["hyper_parameters"]["num_workers"]
+    
+
 
     # TODO: define DataSet and DataLoader.
     # TODO: switch between tasks.

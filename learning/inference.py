@@ -12,10 +12,8 @@ learning_rate = 1e-3
 
 def main():
     # read the data.
-
-    # TODO: define DataSet and DataLoader.
-    # create PTDataset.
     
+    # todo: create testing dataset.
 
     #  use gpu if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
