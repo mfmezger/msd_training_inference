@@ -3,7 +3,7 @@ import pandas
 from DataFrameDataset import DataFrameDataSet
 from monai.networks.nets import UNet
 import yaml
-
+import wandb
 
 
 
@@ -19,7 +19,19 @@ def main():
     epochs = cfg["hyper_parameters"]["epochs"]
     learning_rate = cfg["hyper_parameters"]["lr"]
     num_workers = cfg["hyper_parameters"]["num_workers"]
+
+    # initialize logging.
+    # start with wandb.
+    if cfg["logging"]["logging_wandb"]:
+        wandb.init(project="msd-SN")
     
+    # tensorboard logging.
+    if cfg["logging"]["logging_tensorboard"]:
+        pass
+    
+    # csv logging. 
+    if cfg["logging"]["logging_csv"]:
+        pass
 
 
     # TODO: define DataSet and DataLoader.
@@ -39,9 +51,12 @@ def main():
     criterion = nn.CrossEntropyLoss()
 
 
-    # start the training.
+    # epoch loops.
     for epoch in range(epochs):
         loss = 0
+        val_loss = 0
+
+        # start the training.
         for img, mask in train_loader:
             # load it to the active device
             img = img.to(device)            
@@ -66,24 +81,42 @@ def main():
             loss += train_loss.item()
 
 
+        # validation loop.
+        for img, mask in val_loader:
             
-            # TODO: Logging.
-    
-    # compute the epoch training loss
-    loss = loss / len(train_loader)
-    
-    # display the epoch training loss
-    print("epoch : {}/{}, recon loss = {:.8f}".format(epoch + 1, epochs, loss))
+            img = img.to(device)            
+            mask = mask.to(device)             
+            
+            # compute reconstructions
+            outputs = model(img)
+            
+            # compute training reconstruction loss
+            loss = criterion(outputs, mask)
+            
+            # add the mini-batch training loss to epoch loss
+            val_loss += loss.item()
 
+            # logging.
+            # wandb logging.
+            if cfg["logging"]["logging_wandb"]:
+                wandb.log({
+                    "train_loss": train_loss,
+                    "val_loss": val_loss
+                })
+            # tensorboard logging.
+            if cfg["logging"]["logging_tensorboard"]:
+                pass
 
-    # test the model.
+            # csv logging.
+            if cfg["logging"]["logging_csv"]:
+                pass
 
-
-    # find a fitting threshold.
-
-
-
-
+        # compute the epoch training loss
+        loss = loss / len(train_loader)
+        val_loss = val_loss / len(val_loader)
+        # display the epoch training loss
+        print("epoch : {}/{}, loss = {:.8f}".format(epoch + 1, epochs, loss))
+        print("epoch : {}/{}, val_loss = {:.8f}".format(epoch + 1, epochs, val_loss))
 
 
 if __name__ == "__main__":

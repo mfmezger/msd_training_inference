@@ -4,14 +4,15 @@ data_storage:
   data_location_test: "/home/marc/msd/data/"
   data_location_saving_test_data: "/home/marc/msd/results/"
 
-
-# define the hyperparameters.
-hyper_parameters:
+# Defines which logging frameworks to use.
+logging:
   # logging
   logging_wandb: True
   logging_tensorboard: False
   logging_csv: False
 
+# define the hyperparameters.
+hyper_parameters:
   # training
   batch_size: 32
   num_epochs: 100
