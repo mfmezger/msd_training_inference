@@ -6,8 +6,6 @@ import yaml
 import wandb
 
 
-
-
 def main():
     # read the data.
     # define the data directory
@@ -49,7 +47,6 @@ def main():
 
     # mean-squared error loss
     criterion = nn.CrossEntropyLoss()
-
 
     # epoch loops.
     for epoch in range(epochs):
@@ -117,6 +114,14 @@ def main():
         # display the epoch training loss
         print("epoch : {}/{}, loss = {:.8f}".format(epoch + 1, epochs, loss))
         print("epoch : {}/{}, val_loss = {:.8f}".format(epoch + 1, epochs, val_loss))
+
+        # checkpoint the model every 50 epochs.
+        if (epoch + 1) % 50 == 0:
+            # save the model
+            torch.save(model.state_dict(), "model_{}.pth".format(epoch + 1))
+
+    # save the model.
+    torch.save(model.state_dict(), "model.pt")
 
 
 if __name__ == "__main__":
