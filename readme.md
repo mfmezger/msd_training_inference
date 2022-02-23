@@ -34,9 +34,7 @@ The script 'training.py' in the learning folder trains the model. You can change
 Implementation by Marc Fabian Mezger (@mfmezger) https://github.com/mfmezger
 
 
-Notes
-loss direkt in forward loop berechnen. init pass für größe des models.
 
-get imputs methode mit samba variablen samba.randn
-nur eine größe als input möglich.
+
+
 

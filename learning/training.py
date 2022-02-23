@@ -1,8 +1,8 @@
 import torch
 import pandas
-from DataFrameDataset import DataFrameDataSet
 from monai.networks.nets import UNet
 import yaml
+from PTDataSet import TorchDataSet
 import wandb
 
 
@@ -31,22 +31,35 @@ def main():
     if cfg["logging"]["logging_csv"]:
         pass
 
-
-    # TODO: define DataSet and DataLoader.
-    # TODO: switch between tasks.
     #  use gpu if available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # initalize the model
     model = UNet().to(device)
 
-    # TODO: eventuell Ranger21?
-    # create an optimizer object
-    # Adam optimizer with learning rate 1e-3
+    # create an optimizer.
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
     # mean-squared error loss
     criterion = nn.CrossEntropyLoss()
+
+    # test initial pass if model capacity is enough.
+    # create empty tensor for testing.
+    # TODO: find common  size.
+    test_input = torch.randn(1, 1, 100, 512, 512)
+
+    # propagate the input through the model
+    test_output = model(test_input)
+
+    # test that input shape equals output shape.
+    assert test_input.shape == test_output.shape
+
+    # define dataset.
+    train_ds = TorchDataSet(directory="data/train/")
+    val_ds = TorchDataSet(directory="data/val/")
+    # create a dataloader object.
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
+    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     # epoch loops.
     for epoch in range(epochs):
