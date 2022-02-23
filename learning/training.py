@@ -4,6 +4,7 @@ from monai.networks.nets import UNet
 import yaml
 from PTDataSet import TorchDataSet
 import wandb
+from torch.utils.tensorboard import SummaryWriter
 
 
 def main():
@@ -25,7 +26,7 @@ def main():
     
     # tensorboard logging.
     if cfg["logging"]["logging_tensorboard"]:
-        pass
+        writer = SummaryWriter()
     
     # csv logging. 
     if cfg["logging"]["logging_csv"]:
@@ -103,23 +104,32 @@ def main():
             # compute training reconstruction loss
             loss = criterion(outputs, mask)
             
+            # TODO: Metrics
+            # calculate other metrics. fwIOU. mIou, Dice, etc.
+
+
+            
             # add the mini-batch training loss to epoch loss
             val_loss += loss.item()
 
-            # logging.
-            # wandb logging.
-            if cfg["logging"]["logging_wandb"]:
-                wandb.log({
-                    "train_loss": train_loss,
-                    "val_loss": val_loss
-                })
-            # tensorboard logging.
-            if cfg["logging"]["logging_tensorboard"]:
-                pass
 
-            # csv logging.
-            if cfg["logging"]["logging_csv"]:
-                pass
+
+        # logging.
+        # wandb logging.
+        if cfg["logging"]["logging_wandb"]:
+            wandb.log({
+                "train_loss": train_loss,
+                "val_loss": val_loss
+            })
+        # tensorboard logging.
+        if cfg["logging"]["logging_tensorboard"]:
+            # log loss
+            writer.add_scalar("Loss/train", train_loss, epoch)
+            writer.add_scalar("Loss/val", val_loss, epoch)
+            # log metrics
+        # csv logging.
+        if cfg["logging"]["logging_csv"]:
+            pass
 
         # compute the epoch training loss
         loss = loss / len(train_loader)
