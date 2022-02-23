@@ -1,8 +1,7 @@
-import os
-from batchviewer import view_batch
-
 import numpy as np
+import os
 import torch
+from batchviewer import view_batch
 from scipy.ndimage.filters import gaussian_filter
 from torch.utils.data import Dataset
 
@@ -42,4 +41,4 @@ if __name__ == '__main__':
     img, mask = dataset[0]
     print(img.shape)
 
-    view_batch(img, mask,  height=512, width=512)
+    view_batch(img, mask, height=512, width=512)

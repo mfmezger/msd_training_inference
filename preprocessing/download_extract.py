@@ -1,14 +1,14 @@
-import os
-import yaml
-import torch
+import SimpleITK as sitk
 import nibabel as nib
-from monai.apps import extractall
-from pathlib import Path
+import os
 import random
 import shutil
-import SimpleITK as sitk
+import torch
+import yaml
+from monai.apps import extractall
 # from torchio.transforms import ZNormalization
 from parallel_sync import wget
+from pathlib import Path
 
 
 def preprocessing_ct(image):
@@ -35,17 +35,17 @@ def save_pt(image, name, save_dir, mask=None):
     if mask is None:
         image = torch.from_numpy(image)
 
-        #path = save_dir + "/" + str(name) + ".pt"
+        # path = save_dir + "/" + str(name) + ".pt"
         path = os.path.join(save_dir, str(name) + ".pt")
-        
+
         torch.save({"vol": image, "id": name}, path)
     else:
         image = torch.from_numpy(image)
         mask = torch.from_numpy(mask)
 
-        #path = save_dir + "/" + str(name) + ".pt"
+        # path = save_dir + "/" + str(name) + ".pt"
         path = os.path.join(save_dir, str(name) + ".pt")
-        
+
         torch.save({"vol": image, "mask": mask, "id": name}, path)
 
 
@@ -174,7 +174,7 @@ def prepare_conversion(cfg):
 
 def get_folders(root_dir):
     """Return the folder locations."""
-    
+
     brain_dir = os.path.join(root_dir, "Task01_BrainTumour")
     heart_dir = os.path.join(root_dir, "Task02_Heart")
     liver_dir = os.path.join(root_dir, "Task03_Liver")
@@ -236,7 +236,6 @@ def download(root_dir, cfg):
         aws_links = "aws_links_EU"
     if cfg["data_storage"]["server"] == "NA":
         aws_links = "aws_links_NA"
-
 
     get_brain_aws = cfg[aws_links]["brain"]
     get_heart_aws = cfg[aws_links]["heart"]

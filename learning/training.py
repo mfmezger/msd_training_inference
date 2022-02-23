@@ -1,10 +1,11 @@
-import torch
 import pandas
-from monai.networks.nets import UNet
-import yaml
-from PTDataSet import TorchDataSet
+import torch
 import wandb
+import yaml
+from monai.networks.nets import UNet
 from torch.utils.tensorboard import SummaryWriter
+
+from PTDataSet import TorchDataSet
 
 
 def main():
@@ -23,11 +24,11 @@ def main():
     # start with wandb.
     if cfg["logging"]["logging_wandb"]:
         wandb.init(project="msd-SN")
-    
+
     # tensorboard logging.
     if cfg["logging"]["logging_tensorboard"]:
         writer = SummaryWriter()
-    
+
     # csv logging. 
     if cfg["logging"]["logging_csv"]:
         pass
@@ -70,49 +71,43 @@ def main():
         # start the training.
         for img, mask in train_loader:
             # load it to the active device
-            img = img.to(device)            
-            mask = mask.to(device)             
+            img = img.to(device)
+            mask = mask.to(device)
             # reset the gradients back to zero
             # PyTorch accumulates gradients on subsequent backward passes
             optimizer.zero_grad()
-            
+
             # compute reconstructions
             outputs = model(img)
-            
+
             # compute training reconstruction loss
             train_loss = criterion(outputs, mask)
-            
+
             # compute accumulated gradients
             train_loss.backward()
-            
+
             # perform parameter update based on current gradients
             optimizer.step()
-            
+
             # add the mini-batch training loss to epoch loss
             loss += train_loss.item()
 
-
         # validation loop.
         for img, mask in val_loader:
-            
-            img = img.to(device)            
-            mask = mask.to(device)             
-            
+            img = img.to(device)
+            mask = mask.to(device)
+
             # compute reconstructions
             outputs = model(img)
-            
+
             # compute training reconstruction loss
             loss = criterion(outputs, mask)
-            
+
             # TODO: Metrics
             # calculate other metrics. fwIOU. mIou, Dice, etc.
 
-
-            
             # add the mini-batch training loss to epoch loss
             val_loss += loss.item()
-
-
 
         # logging.
         # wandb logging.
