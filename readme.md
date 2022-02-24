@@ -12,6 +12,7 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
 - [ ] Inference Script
 - [ ] WandB and Logging
 - [ ] Training routine regarding imaging size and so on.
+- [ ] Upsampling / Padding for Dataset same size.
 
 ## Installation
 
