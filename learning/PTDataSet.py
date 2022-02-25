@@ -2,9 +2,22 @@ import numpy as np
 import os
 import torch
 from batchviewer import view_batch
-from scipy.ndimage.filters import gaussian_filter
+
 import torch.nn as nn
 from torch.utils.data import Dataset
+
+
+def padding(img, mask,target_size, padding=False, upsample=False, downsample=False):
+    """If padding True then pad the image to the target size."""
+    if padding:
+        img = nn.functional.pad(input=img, pad=(0, 1, 1, 1), mode='constant', value=0)
+        mask = nn.functional.pad(input=mask, pad=(0, 1, 1, 1), mode='constant', value=0)
+    if upsample:
+        img = nn.functional.interpolate(img, size=target_size, mode='bilinear', align_corners=False)
+        mask = nn.functional.interpolate(mask, size=target_size, mode='nearest', align_corners=False)
+    if downsample:
+        img = nn.functional.interpolate(img, size=target_size, mode='bilinear', align_corners=False)
+        mask = nn.functional.interpolate(mask, size=target_size, mode='nearest', align_corners=False)
 
 
 class TorchDataSet(Dataset):
@@ -21,18 +34,6 @@ class TorchDataSet(Dataset):
         return len(self.images)
 
 
-    def padding(self, target_size, padding):
-        """If padding True then pad the image to the target size."""
-        if padding:
-            self.img = nn.pad(self.img, (0, target_size - self.img.shape[2], 0, target_size - self.img.shape[3]))
-            self.mask = nn.pad(self.mask, (0, target_size - self.mask.shape[2], 0, target_size - self.mask.shape[3]))
-        if upsample:
-            self.img = nn.functional.interpolate(self.img, size=target_size, mode='bilinear', align_corners=False)
-            self.mask = nn.functional.interpolate(self.mask, size=target_size, mode='nearest', align_corners=False)
-        if downsample:
-            self.img = nn.functional.interpolate(self.img, size=target_size, mode='bilinear', align_corners=False)
-            self.mask = nn.functional.interpolate(self.mask, size=target_size, mode='nearest', align_corners=False)
-
     def __getitem__(self, idx):
         if torch.is_tensor(idx):
             idx = idx.tolist()
@@ -48,14 +49,26 @@ class TorchDataSet(Dataset):
         image = image.to(torch.float32).unsqueeze(0)
         mask = mask.to(torch.float32).unsqueeze(0)
 
+        if self.padding:
+            image, mask = padding(image, mask, target_size=(1,1,20,512,512), padding=True)
+
         return image, mask
 
 
 if __name__ == '__main__':
-    dataset = TorchDataSet(directory="data/")
+    # create empty tensor for testing.
+    a = torch.randn( 10, 100, 100)
+    b = torch.randn( 10, 100, 100)
+
+    # save the tensor to disk.
+    torch.save({"vol": a, "mask": b}, "C:\\Users\\Marc\\Documents\\GitHub\\msd_training_inference\\data\\test.pt")
+
+    dataset = TorchDataSet(directory="C:\\Users\\Marc\\Documents\\GitHub\\msd_training_inference\\data\\")
     img, mask = dataset[0]
     print(img.shape)
 
     view_batch(img, mask, height=512, width=512)
 
-    # TODO: Implement tests for padding.
+    dataset = TorchDataSet(directory="C:\\Users\\Marc\\Documents\\GitHub\\msd_training_inference\\data\\", padding=True)
+    img, mask = dataset[0]
+    print(img.shape)

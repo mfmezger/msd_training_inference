@@ -4,7 +4,7 @@ import wandb
 import yaml
 from monai.networks.nets import UNet
 from torch.utils.tensorboard import SummaryWriter
-
+from monai.metrics import DiceMetric, HausdorffDistanceMetric
 from PTDataSet import TorchDataSet
 
 
@@ -63,10 +63,16 @@ def main():
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
+    # initialize the metrics.
+    dice_metric = DiceMetric(include_background=True)
+    hausdorff_metric = HausdorffMetric(include_background=True)
+
     # epoch loops.
     for epoch in range(epochs):
         loss = 0
         val_loss = 0
+        dice_score = 0
+        hausdorff_score = 0
 
         # start the training.
         for img, mask in train_loader:
@@ -103,13 +109,25 @@ def main():
             # compute training reconstruction loss
             loss = criterion(outputs, mask)
 
+            # TODO: remove the gradients
+
+
             # TODO: Metrics
             # calculate other metrics. fwIOU. mIou, Dice, etc.
-
+            dice_score += dice_metric(outputs, mask)
+            hausdorff_score += hausdorff_metric(outputs, mask)            
             # add the mini-batch training loss to epoch loss
             val_loss += loss.item()
 
-        # logging.
+
+
+        # compute the epoch training loss
+        loss = loss / len(train_loader)
+        val_loss = val_loss / len(val_loader)
+        dice_score = dice_score / len(val_loader)
+        hausdorff_score = hausdorff_score / len(val_loader)
+
+                # logging.
         # wandb logging.
         if cfg["logging"]["logging_wandb"]:
             wandb.log({
@@ -126,9 +144,7 @@ def main():
         if cfg["logging"]["logging_csv"]:
             pass
 
-        # compute the epoch training loss
-        loss = loss / len(train_loader)
-        val_loss = val_loss / len(val_loader)
+
         # display the epoch training loss
         print("epoch : {}/{}, loss = {:.8f}".format(epoch + 1, epochs, loss))
         print("epoch : {}/{}, val_loss = {:.8f}".format(epoch + 1, epochs, val_loss))
