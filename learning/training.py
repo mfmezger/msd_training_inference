@@ -4,7 +4,7 @@ import wandb
 import yaml
 from monai.networks.nets import UNet
 from torch.utils.tensorboard import SummaryWriter
-from monai.metrics import DiceMetric, HausdorffDistanceMetric
+from monai.metrics import DiceMetric, HausdorffDistanceMetric, SurfaceDistanceMetric
 from PTDataSet import TorchDataSet
 
 
@@ -66,6 +66,7 @@ def main():
     # initialize the metrics.
     dice_metric = DiceMetric(include_background=True)
     hausdorff_metric = HausdorffMetric(include_background=True)
+    surface_metric = SurfaceDistanceMetric(include_background=True)
 
     # epoch loops.
     for epoch in range(epochs):
@@ -73,6 +74,7 @@ def main():
         val_loss = 0
         dice_score = 0
         hausdorff_score = 0
+        surface_score = 0
 
         # start the training.
         for img, mask in train_loader:
@@ -111,10 +113,10 @@ def main():
 
             outputs = outputs.detach()
 
-            # TODO: Metrics
-            # calculate other metrics. fwIOU. mIou, Dice, etc.
+            # calculate other metrics. 
             dice_score += dice_metric(outputs, mask)
-            hausdorff_score += hausdorff_metric(outputs, mask)            
+            hausdorff_score += hausdorff_metric(outputs, mask)
+            surface_score += surface_metric(outputs, mask)       
             # add the mini-batch training loss to epoch loss
             val_loss += loss.item()
 
@@ -125,13 +127,17 @@ def main():
         val_loss = val_loss / len(val_loader)
         dice_score = dice_score / len(val_loader)
         hausdorff_score = hausdorff_score / len(val_loader)
+        surface_score = surface_score / len(val_loader)
 
                 # logging.
         # wandb logging.
         if cfg["logging"]["logging_wandb"]:
             wandb.log({
                 "train_loss": train_loss,
-                "val_loss": val_loss
+                "val_loss": val_loss,
+                "dice_score": dice_score,
+                "hausdorff_score": hausdorff_score,
+                "surface_score": surface_score
             })
         # tensorboard logging.
         if cfg["logging"]["logging_tensorboard"]:
@@ -139,6 +145,10 @@ def main():
             writer.add_scalar("Loss/train", train_loss, epoch)
             writer.add_scalar("Loss/val", val_loss, epoch)
             # log metrics
+            writer.add_scalar("Metrics/dice_score", dice_score, epoch)
+            writer.add_scalar("Metrics/hausdorff_score", hausdorff_score, epoch)
+            writer.add_scalar("Metrics/surface_score", surface_score, epoch)
+
         # csv logging.
         if cfg["logging"]["logging_csv"]:
             pass

@@ -10,7 +10,6 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
 - [ ] Add more metrics
 - [ ] Test on server.
 - [ ] Inference Script
-- [ ] WandB and Logging
 - [ ] Test Padding and resizing.
 
 ## Installation
