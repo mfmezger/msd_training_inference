@@ -1,16 +1,16 @@
 # install requirements
 python3 pip install -r requirements.txt
 
-# enable wandb logging.
-
 
 # start the download and extraction. 
 python3 preprocessing/download_and_extract.py
 
+# enable wandb logging.
+
 # start the training.
-python learning/training.py
+python3 learning/training.py
 
 # start the inference.
-python learning/inference.py
+python3 learning/inference.py
 
 

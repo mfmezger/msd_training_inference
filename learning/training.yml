@@ -6,14 +6,12 @@ data_storage:
 
 # Defines which logging frameworks to use.
 logging:
-  # logging
   logging_wandb: True
   logging_tensorboard: False
   logging_csv: False
 
-# define the hyperparameters.
+# define the hyperparameters for training.
 hyper_parameters:
-  # training
   batch_size: 32
   num_epochs: 100
   num_workers: 0
