@@ -1,4 +1,3 @@
-import pandas
 import torch
 import wandb
 import yaml
@@ -65,7 +64,7 @@ def main():
 
     # initialize the metrics.
     dice_metric = DiceMetric(include_background=True)
-    hausdorff_metric = HausdorffMetric(include_background=True)
+    hausdorff_metric = HausdorffDistanceMetric(include_background=True)
     surface_metric = SurfaceDistanceMetric(include_background=True)
 
     # epoch loops.

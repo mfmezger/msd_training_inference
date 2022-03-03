@@ -1,4 +1,3 @@
-import SimpleITK as sitk
 import nibabel as nib
 import os
 import random
