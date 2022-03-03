@@ -6,26 +6,9 @@ import shutil
 import torch
 import yaml
 from monai.apps import extractall
-# from torchio.transforms import ZNormalization
 from parallel_sync import wget
 from pathlib import Path
-
-
-def preprocessing_ct(image):
-    """Preprocess the CT images."""
-    # clip values in 0.05 and 99.5 percentile.
-
-    # do z-score normalization. 
-    # image = ZNormalization()(image)
-    return image
-
-
-def preprocessing_mr(image):
-    """Preprocess the MRI images."""
-    # do z-score normalization.
-    # FIXME: is that really the same as Z Score Normalzation?
-    # image = ZNormalization()(image)
-    return image
+from monai.transforms import NormalizeIntensity
 
 
 def save_pt(image, name, save_dir, mask=None):
@@ -68,6 +51,8 @@ def convert_images(cfg, data_dir, save_dir):
     if data_dir in ct_list:
         ct_preprocessing_decision = True
 
+    normalize = NormalizeIntensity()
+
     # start the conversion of training images and training labels.
     # load the volumes from images and labels.
     for image, label in zip(images_list, label_list):
@@ -97,9 +82,9 @@ def convert_images(cfg, data_dir, save_dir):
 
         # choose prepocessing based on the category.
         if ct_preprocessing_decision:
-            image = preprocessing_ct(image)
+            image = normalize(image)    
         else:
-            image = preprocessing_mr(image)
+            image = normalize(image)
 
         # save the images and labels as pytorch files.
         save_pt(image, name, save_dir + "/train", label)
