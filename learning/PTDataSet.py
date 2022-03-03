@@ -8,8 +8,8 @@ from torch.utils.data import Dataset
 
 def padding(img, mask,target_size, padding=False, upsample=False, downsample=False):
     """If padding True then pad the image to the target size."""
-    # if img.shape() == target_size:
-        # return img, mask
+    if img.shape() == target_size:
+        return img, mask
 
     if padding:
         # performance wise probably better. But avoids the issue of the not even pads.
@@ -23,13 +23,9 @@ def padding(img, mask,target_size, padding=False, upsample=False, downsample=Fal
 
 
     if upsample:
-        #(x, mode=self.mode, scale_factor=self.size)
-        img = nn.functional.interpolate(img, [img.shape[-1]*5, img.shape[-1]*5], mode='bilinear')
-        mask = nn.functional.interpolate(mask, [img.shape[-1]*5, img.shape[-1]*5], mode='bilinear')
+        img = img.upsample(size= target_size, mode='bilinear', align_corners=True)
+        mask = mask.upsample(target_size, mode='nearest')
 
-        # TODO: resize to nearest possible res than pad.
-
-        # mask = nn.functional.interpolate(mask, size=target_size, mode='bilinear', align_corners=False)
     if downsample:
         img = nn.functional.interpolate(img, size=target_size, mode='bilinear', align_corners=False)
         mask = nn.functional.interpolate(mask, size=target_size, mode='nearest', align_corners=False)
@@ -42,10 +38,13 @@ class TorchDataSet(Dataset):
     Loading the Datasets
     """
 
-    def __init__(self, directory, change_res=False):
+    def __init__(self, directory, target_size=(1,20,512,512), padding_bool=False):
         self.directory = directory
         self.images = os.listdir(directory)
         self.change_res = change_res
+        self.target_size = target_size
+        self.padding_bool = padding_bool
+
 
     def __len__(self):
         return len(self.images)
@@ -66,8 +65,14 @@ class TorchDataSet(Dataset):
         image = image.to(torch.float32).unsqueeze(0)
         mask = mask.to(torch.float32).unsqueeze(0)
 
-        if self.change_res:
-            image, mask = padding(image, mask, target_size=(1,20,512,512), padding=False, upsample=True)
+        if image.shape == target_size:
+            if padding_bool:
+                image, mask = padding(image, mask, target_size, padding=True)
+            else:
+                if image.shape < target_size:
+                    image, mask = padding(image, mask, target_size=self.target_size, padding=False, upsample=True)
+                elif image.shape > target_size:
+                    image, mask = padding(image, mask, target_size=self.target_size, padding=False, downsample=True)
 
         return image, mask
 
