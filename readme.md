@@ -1,4 +1,4 @@
-# README
+# README Medical Segmentation Decathlon Download/Extraction, Training, Inference Script
 
 ## Data Source
 
@@ -33,9 +33,3 @@ the batch size, the learning rate, the number of workers and other variables in 
 ## Credits
 
 Implementation by Marc Fabian Mezger (@mfmezger) https://github.com/mfmezger
-
-
-
-
-
-
