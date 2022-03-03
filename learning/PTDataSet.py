@@ -12,18 +12,20 @@ def padding(img, mask,target_size, padding=False, upsample=False, downsample=Fal
         # return img, mask
 
     if padding:
-        print(target_size[-2 ], img.shape[-2])
-        padding_x = int((target_size[-1] - img.shape[-1])/2)
-        padding_y = int((target_size[-2] - img.shape[-2])/2)
-        padding_z = int((target_size[-3] - img.shape[-3])/2)
-        print(padding_x, padding_y, padding_z)
+        # performance wise probably better. But avoids the issue of the not even pads.
+        tmp_img = torch.zeros(target_size)
+        tmp_img[:, :img.shape[0], :img.shape[1], :img.shape[2]] = img
+        img = tmp_img
 
-        img = nn.functional.pad(input=img, pad=(2, padding_z, padding_x, padding_z), mode='constant', value=0)
-        mask = nn.functional.pad(input=mask, pad=(2, padding_z, padding_x, padding_y), mode='constant', value=0)
+        tmp_mask = torch.zeros(target_size)
+        tmp_mask[:, :img.shape[0], :img.shape[1], :img.shape[2]] = mask
+        mask = tmp_mask
+
+
     if upsample:
         #(x, mode=self.mode, scale_factor=self.size)
         img = nn.functional.interpolate(img, [img.shape[-1]*5, img.shape[-1]*5], mode='bilinear')
-        mask = nn.functional.interpolate(mask, [img.shape[-1]*5.12, img.shape[-1]*5], mode='bilinear')
+        mask = nn.functional.interpolate(mask, [img.shape[-1]*5, img.shape[-1]*5], mode='bilinear')
 
         # TODO: resize to nearest possible res than pad.
 

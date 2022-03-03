@@ -109,8 +109,7 @@ def main():
             # compute training reconstruction loss
             loss = criterion(outputs, mask)
 
-            # TODO: remove the gradients
-
+            outputs = outputs.detach()
 
             # TODO: Metrics
             # calculate other metrics. fwIOU. mIou, Dice, etc.
