@@ -23,7 +23,7 @@ As described in the server.sh the following commands have to be executed in the 
 
 First install the requirements. `python3 pip install -r requirements.txt`
 Then downloading of the Dataset `python3 preprocessing/download_and_extract.py`  
-(Logging into wandb: `` if you want to log to Weights and Biases.    
+(Logging into wandb: `wandb login [Your_KEY]` if you want to log to Weights and Biases.    
 Starting the Training: `python3 learning/training.py`     
 Starting the Inference: `python3 learning/inference.py`    
 
