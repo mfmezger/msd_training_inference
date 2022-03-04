@@ -62,7 +62,7 @@ class TorchTestDataSet(Dataset):
                 if image.shape < target_size:
                     image = padding(
                         image,
-                     
+                    
                         target_size=self.target_size,
                         padding=False,
                         upsample=True,

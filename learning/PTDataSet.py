@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # save the tensor to disk.
     torch.save(
         {"vol": a, "mask": b},
-        "data/test.pt",
+        "../data/test.pt",
     )
 
     # dataset = TorchDataSet(
