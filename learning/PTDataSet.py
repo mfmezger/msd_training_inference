@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import torch
 from batchviewer import view_batch
 
@@ -8,22 +9,24 @@ from torch.utils.data import Dataset
 
 def padding(img, mask, target_size, padding=False, upsample=False, downsample=False):
     """If padding True then pad the image to the target size."""
-    if img.shape() == target_size:
+    if  tuple(img.size()) == target_size:
         return img, mask
 
     if padding:
         # performance wise probably better. But avoids the issue of the not even pads.
         tmp_img = torch.zeros(target_size)
-        tmp_img[:, : img.shape[0], : img.shape[1], : img.shape[2]] = img
+        tmp_img[0, : img.shape[0], : img.shape[1], : img.shape[2]] = img
         img = tmp_img
 
         tmp_mask = torch.zeros(target_size)
-        tmp_mask[:, : img.shape[0], : img.shape[1], : img.shape[2]] = mask
+        tmp_mask[0, : img.shape[0], : img.shape[1], : img.shape[2]] = mask
         mask = tmp_mask
 
     if upsample:
-        img = img.upsample(size=target_size, mode="bilinear", align_corners=True)
-        mask = mask.upsample(target_size, mode="nearest")
+        upsample = nn.Upsample(size=target_size, mode="bilinear", align_corners=True)
+        img = upsample(img)
+        upsample = mask.upsample(target_size, mode="nearest")
+        mask = upsample(mask)
 
     if downsample:
         img = nn.functional.interpolate(
@@ -41,10 +44,9 @@ class TorchDataSet(Dataset):
     Loading the Datasets
     """
 
-    def __init__(self, directory, target_size=(1, 20, 512, 512), padding_bool=False):
+    def __init__(self, directory, padding_bool=False, target_size=(1, 20, 512, 512)):
         self.directory = directory
         self.images = os.listdir(directory)
-        self.change_res = change_res
         self.target_size = target_size
         self.padding_bool = padding_bool
 
@@ -65,12 +67,12 @@ class TorchDataSet(Dataset):
         # change the datatype to float32 if you do not use FP16.
         image = image.to(torch.float32).unsqueeze(0)
         mask = mask.to(torch.float32).unsqueeze(0)
-
-        if image.shape == target_size:
-            if padding_bool:
-                image, mask = padding(image, mask, target_size, padding=True)
+        image_size = tuple(image.size())
+        if image_size != self.target_size:
+            if self.padding_bool:
+                image, mask = padding(image, mask, self.target_size, padding=True)
             else:
-                if image.shape < target_size:
+                if  image_size< self.target_size:
                     image, mask = padding(
                         image,
                         mask,
@@ -78,7 +80,7 @@ class TorchDataSet(Dataset):
                         padding=False,
                         upsample=True,
                     )
-                elif image.shape > target_size:
+                elif image_size > self.target_size:
                     image, mask = padding(
                         image,
                         mask,
@@ -98,20 +100,21 @@ if __name__ == "__main__":
     # save the tensor to disk.
     torch.save(
         {"vol": a, "mask": b},
-        "C:\\Users\\Marc\\Documents\\GitHub\\msd_training_inference\\data\\test.pt",
+        "data/test.pt",
     )
 
+    # dataset = TorchDataSet(
+    #     directory="data/"
+    # )
+    # img, mask = dataset[0]
+    # print(img.shape)
+
+
     dataset = TorchDataSet(
-        directory="C:\\Users\\Marc\\Documents\\GitHub\\msd_training_inference\\data\\"
+        directory="data/",
+        padding_bool=True,
     )
     img, mask = dataset[0]
     print(img.shape)
 
-    # view_batch(img, mask, height=512, width=512)
-
-    dataset = TorchDataSet(
-        directory="C:\\Users\\Marc\\Documents\\GitHub\\msd_training_inference\\data\\",
-        change_res=True,
-    )
-    img, mask = dataset[0]
-    print(img.shape)
+    view_batch(img, mask, height=512, width=512)
