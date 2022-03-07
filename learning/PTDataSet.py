@@ -23,9 +23,11 @@ def padding(img, mask, target_size, padding=False, upsample=False, downsample=Fa
         mask = tmp_mask
 
     if upsample:
-        upsample = nn.Upsample(size=target_size, mode="bilinear", align_corners=True)
+        print("Upsample")
+        print(img.size())
+        upsample = nn.Upsample(size=(20,512,512), mode="trilinear", align_corners=True)
         img = upsample(img)
-        upsample = mask.upsample(target_size, mode="nearest")
+        upsample = nn.Upsample(size=(20,512,512), mode="nearest")
         mask = upsample(mask)
 
     if downsample:
@@ -112,9 +114,9 @@ if __name__ == "__main__":
 
     dataset = TorchDataSet(
         directory="data/",
-        padding_bool=True,
+        padding_bool=False,
     )
     img, mask = dataset[0]
-    print(img.shape)
+    print(img.shape, mask.shape)
 
     view_batch(img[0], mask[0], height=512, width=512)
