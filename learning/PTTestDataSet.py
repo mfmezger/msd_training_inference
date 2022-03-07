@@ -8,22 +8,24 @@ from torch.utils.data import Dataset
 
 def padding(img, target_size, padding=False, upsample=False, downsample=False):
     """If padding True then pad the image to the target size."""
-    if img.shape() == target_size:
+    if tuple(img.size()) == target_size:
         return img, mask
-
+    print(img.size(), target_size)
     if padding:
         # performance wise probably better. But avoids the issue of the not even pads.
         tmp_img = torch.zeros(target_size)
-        tmp_img[:, : img.shape[0], : img.shape[1], : img.shape[2]] = img
+        tmp_img[:, :, : img.shape[2], : img.shape[3], : img.shape[4]] = img
         img = tmp_img
 
     if upsample:
-        img = img.upsample(size=target_size, mode="bilinear", align_corners=True)
+        upsample = nn.Upsample(
+            size=target_size[2:], mode="trilinear", align_corners=True
+        )
+        img = upsample(img)
 
     if downsample:
-        img = nn.functional.interpolate(
-            img, size=target_size, mode="bilinear", align_corners=False
-        )
+        img = nn.functional.interpolate(img, size=target_size[2:], mode="trilinear")
+
     return img
 
 
@@ -62,7 +64,6 @@ class TorchTestDataSet(Dataset):
                 if image.shape < target_size:
                     image = padding(
                         image,
-                    
                         target_size=self.target_size,
                         padding=False,
                         upsample=True,
@@ -70,7 +71,6 @@ class TorchTestDataSet(Dataset):
                 elif image.shape > target_size:
                     image = padding(
                         image,
-                    
                         target_size=self.target_size,
                         padding=False,
                         downsample=True,
@@ -85,21 +85,14 @@ if __name__ == "__main__":
 
     # save the tensor to disk.
     torch.save(
-        {"vol": a},
-        "test.pt",
+        {"vol": a}, "test.pt",
     )
 
-    dataset = TorchTestDataSet(
-        directory="data/",
-    )
+    dataset = TorchTestDataSet(directory="data/",)
     img = dataset[0]
     print(img.shape)
 
-
-    dataset = TorchTestDataSet(
-        directory="data/",
-        change_res=True,
-    )
+    dataset = TorchTestDataSet(directory="data/", change_res=True,)
     img = dataset[0]
     print(img.shape)
 

@@ -6,7 +6,6 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
 
 ## TODOS
 
-- [ ] Z Normalisation
 - [ ] Test on server.
 - [ ] Inference Script
 - [ ] Resizing of the test images?
