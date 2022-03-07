@@ -4,6 +4,7 @@ from DataFrameDataset import DataFrameDataSet
 from autoencoder import AutoEncoder
 from monai.networks.nets import UNet
 from PTTestDataSet import TorchTestDataSet
+
 # hyperparameters
 batch_size = 512
 epochs = 2000
@@ -15,8 +16,6 @@ def main():
     with open("training.yml", "r") as ymlfile:
         cfg = yaml.safe_load(ymlfile)
 
-    # read the data.
-
     # initialise test dataset.
     data_dir_val = cfg["data"]["data_dir_val"]
     test_dataset = TorchTestDataSet(directory=data_dir_val)
@@ -27,7 +26,6 @@ def main():
     model = UNet().to(device)
 
     # start the training.
-    # make epoch dependable on dataloader
     for x, name in test_loader:
         x = x.to(device)
 

@@ -6,7 +6,7 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
 
 ## TODOS
 
-- [ ] Test on server.
+- [ ] Test on linux pc.
 - [ ] Inference Script
 
 

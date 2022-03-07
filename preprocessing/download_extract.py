@@ -45,7 +45,14 @@ def convert_images(cfg, data_dir, save_dir):
     image_list_test = [x for x in image_list_test if not x.startswith(".")]
 
     # do the preprocessing based on the category.
-    ct_list = ["Task03_Liver", "Task06_Lung", "Task07_Pancreas", "Task10_Colon", "Task08_HepaticVessel", "Task09_Spleen"]
+    ct_list = [
+        "Task03_Liver",
+        "Task06_Lung",
+        "Task07_Pancreas",
+        "Task10_Colon",
+        "Task08_HepaticVessel",
+        "Task09_Spleen",
+    ]
     ct_preprocessing_decision = False
     if data_dir in ct_list:
         ct_preprocessing_decision = True
@@ -81,7 +88,7 @@ def convert_images(cfg, data_dir, save_dir):
 
         # choose prepocessing based on the category.
         if ct_preprocessing_decision:
-            image = normalize(image)    
+            image = normalize(image)
         else:
             image = normalize(image)
 
@@ -111,7 +118,7 @@ def convert_images(cfg, data_dir, save_dir):
 
         # choose prepocessing based on the category.
         if ct_preprocessing_decision:
-            image = normalize(image)    
+            image = normalize(image)
         else:
             image = normalize(image)
 
@@ -130,11 +137,32 @@ def prepare_conversion(cfg):
     Path(pt_dir).mkdir(parents=False, exist_ok=True)
 
     # retrive folder names.
-    brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
+    (
+        brain_dir,
+        colon_dir,
+        heart_dir,
+        hippo_dir,
+        liver_dir,
+        lung_dir,
+        pancreas_dir,
+        prostate_dir,
+        spleen_dir,
+        vessel_dir,
+    ) = get_folders(root_dir)
 
     # create new folders from names for the tasks
-    folder_list = ["Task01_BrainTumor", "Task02_Heart", "Task03_Liver", "Task04_Hippocampus", "Task05_Prostate", "Task06_Lung", "Task07_Pancreas", "Task08_HepaticVessel",
-                   "Task09_Spleen", "Task10_Colon"]
+    folder_list = [
+        "Task01_BrainTumor",
+        "Task02_Heart",
+        "Task03_Liver",
+        "Task04_Hippocampus",
+        "Task05_Prostate",
+        "Task06_Lung",
+        "Task07_Pancreas",
+        "Task08_HepaticVessel",
+        "Task09_Spleen",
+        "Task10_Colon",
+    ]
 
     # create new folders from names in folder list in pt_dir
     for folder in folder_list:
@@ -169,20 +197,53 @@ def get_folders(root_dir):
     vessel_dir = os.path.join(root_dir, "Task08_HepaticVessel")
     spleen_dir = os.path.join(root_dir, "Task09_Spleen")
     colon_dir = os.path.join(root_dir, "Task10_Colon")
-    return brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir
+    return (
+        brain_dir,
+        colon_dir,
+        heart_dir,
+        hippo_dir,
+        liver_dir,
+        lung_dir,
+        pancreas_dir,
+        prostate_dir,
+        spleen_dir,
+        vessel_dir,
+    )
 
 
 def train_test_split(cfg):
     """Split the training data randomly in train and validation based on a   70%/30% split."""
     root_dir = cfg["data_storage"]["pt_location"]
-    brain_dir, colon_dir, heart_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir = get_folders(root_dir)
+    (
+        brain_dir,
+        colon_dir,
+        heart_dir,
+        hippo_dir,
+        liver_dir,
+        lung_dir,
+        pancreas_dir,
+        prostate_dir,
+        spleen_dir,
+        vessel_dir,
+    ) = get_folders(root_dir)
 
     # get in every folder, randomly select 30% and move them to an extra validation folder. (move, not copy)
-    for f in [heart_dir, brain_dir, colon_dir, hippo_dir, liver_dir, lung_dir, pancreas_dir, prostate_dir, spleen_dir, vessel_dir]:
+    for f in [
+        heart_dir,
+        brain_dir,
+        colon_dir,
+        hippo_dir,
+        liver_dir,
+        lung_dir,
+        pancreas_dir,
+        prostate_dir,
+        spleen_dir,
+        vessel_dir,
+    ]:
         # create new val folder.
         Path(os.path.join(f, "validation")).mkdir(parents=False, exist_ok=True)
         # get the list of files in the folder.
-        file_list = os.listdir(os.path.join(f, "train", ))
+        file_list = os.listdir(os.path.join(f, "train",))
         # get the number of files in the folder.
         file_number = len(file_list)
         # get the number of files to move.
