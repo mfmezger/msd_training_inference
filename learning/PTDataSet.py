@@ -25,9 +25,9 @@ def padding(img, mask, target_size, padding=False, upsample=False, downsample=Fa
     if upsample:
         print("Upsample")
         print(img.size())
-        upsample = nn.Upsample(size=(20,512,512), mode="trilinear", align_corners=True)
+        upsample = nn.Upsample(size=target_size[2:], mode="trilinear", align_corners=True)
         img = upsample(img)
-        upsample = nn.Upsample(size=(20,512,512), mode="nearest")
+        upsample = nn.Upsample(size=target_size[2:], mode="nearest")
         mask = upsample(mask)
 
     if downsample:
