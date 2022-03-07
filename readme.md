@@ -9,7 +9,6 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
 - [ ] Z Normalisation
 - [ ] Test on server.
 - [ ] Inference Script
-- [ ] Test Padding and resizing.
 - [ ] Resizing of the test images?
 
 ## Installation
