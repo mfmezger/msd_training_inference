@@ -56,9 +56,10 @@ def main():
     assert test_input.shape == test_output.shape
 
     # define dataset.
-    # TODO: get from config
-    train_ds = TorchDataSet(directory="data/train/")
-    val_ds = TorchDataSet(directory="data/val/")
+    data_dir_train = cfg["data"]["data_dir_train"]
+    data_dir_val = cfg["data"]["data_dir_val"]
+    train_ds = TorchDataSet(directory=data_dir_train)
+    val_ds = TorchDataSet(directory=data_dir_val) 
     # create a dataloader object.
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=num_workers)
