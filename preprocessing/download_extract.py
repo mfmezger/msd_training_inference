@@ -111,9 +111,9 @@ def convert_images(cfg, data_dir, save_dir):
 
         # choose prepocessing based on the category.
         if ct_preprocessing_decision:
-            image = preprocessing_ct(image)
+            image = normalize(image)    
         else:
-            image = preprocessing_mr(image)
+            image = normalize(image)
 
         # save the images and labels as pytorch files.
         save_pt(image, name, save_dir + "/test")
