@@ -9,34 +9,30 @@ from torch.utils.data import Dataset
 
 def padding(img, mask, target_size, padding=False, upsample=False, downsample=False):
     """If padding True then pad the image to the target size."""
-    if  tuple(img.size()) == target_size:
+    if tuple(img.size()) == target_size:
         return img, mask
     print(img.size(), target_size)
     if padding:
         # performance wise probably better. But avoids the issue of the not even pads.
         tmp_img = torch.zeros(target_size)
-        tmp_img[:,:, : img.shape[2], : img.shape[3], : img.shape[4]] = img
+        tmp_img[:, :, : img.shape[2], : img.shape[3], : img.shape[4]] = img
         img = tmp_img
 
         tmp_mask = torch.zeros(target_size)
-        tmp_mask[:,:, : mask.shape[2], : mask.shape[3], : mask.shape[4]] = mask
+        tmp_mask[:, :, : mask.shape[2], : mask.shape[3], : mask.shape[4]] = mask
         mask = tmp_mask
 
     if upsample:
-        print("Upsample")
-        print(img.size())
-        upsample = nn.Upsample(size=target_size[2:], mode="trilinear", align_corners=True)
+        upsample = nn.Upsample(
+            size=target_size[2:], mode="trilinear", align_corners=True
+        )
         img = upsample(img)
         upsample = nn.Upsample(size=target_size[2:], mode="nearest")
         mask = upsample(mask)
 
     if downsample:
-        img = nn.functional.interpolate(
-            img, size=target_size, mode="bilinear", align_corners=False
-        )
-        mask = nn.functional.interpolate(
-            mask, size=target_size, mode="nearest", align_corners=False
-        )
+        img = nn.functional.interpolate(img, size=target_size[2:], mode="trilinear")
+        mask = nn.functional.interpolate(mask, size=target_size[2:], mode="nearest")
 
     return img, mask
 
@@ -46,7 +42,7 @@ class TorchDataSet(Dataset):
     Loading the Datasets
     """
 
-    def __init__(self, directory, padding_bool=False, target_size=(1, 1, 20, 512, 512)):
+    def __init__(self, directory, padding_bool=False, target_size=(1, 1, 5, 50, 50)):
         self.directory = directory
         self.images = os.listdir(directory)
         self.target_size = target_size
@@ -74,7 +70,7 @@ class TorchDataSet(Dataset):
             if self.padding_bool:
                 image, mask = padding(image, mask, self.target_size, padding=True)
             else:
-                if  image_size< self.target_size:
+                if image_size < self.target_size:
                     image, mask = padding(
                         image,
                         mask,
@@ -101,8 +97,7 @@ if __name__ == "__main__":
 
     # save the tensor to disk.
     torch.save(
-        {"vol": a, "mask": b},
-        "data\\test.pt",
+        {"vol": a, "mask": b}, "data\\test.pt",
     )
 
     # dataset = TorchDataSet(
@@ -111,11 +106,7 @@ if __name__ == "__main__":
     # img, mask = dataset[0]
     # print(img.shape)
 
-
-    dataset = TorchDataSet(
-        directory="data/",
-        padding_bool=False,
-    )
+    dataset = TorchDataSet(directory="data/", padding_bool=False,)
     img, mask = dataset[0]
     print(img.shape, mask.shape)
 
