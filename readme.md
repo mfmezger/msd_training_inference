@@ -8,7 +8,7 @@ Medical Segmentation Decathlon http://medicaldecathlon.com/
 
 - [ ] Test on server.
 - [ ] Inference Script
-- [ ] Resizing of the test images?
+
 
 ## Installation
 

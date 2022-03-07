@@ -10,7 +10,7 @@ from PTDataSet import TorchDataSet
 def main():
     # read the data.
     # define the data directory
-    with open("config.yml", "r") as ymlfile:
+    with open("training.yml", "r") as ymlfile:
         cfg = yaml.safe_load(ymlfile)
 
     # hyperparameters from training.yml
@@ -56,6 +56,7 @@ def main():
     assert test_input.shape == test_output.shape
 
     # define dataset.
+    # TODO: get from config
     train_ds = TorchDataSet(directory="data/train/")
     val_ds = TorchDataSet(directory="data/val/")
     # create a dataloader object.

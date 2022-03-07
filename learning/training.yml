@@ -1,6 +1,7 @@
 # DEFINE THE DATA DIRECTORY
 data_storage:
   data_location_training: "/home/marc/msd/data/"
+  data_location_val: "/home/marc/msd/data/"
   data_location_test: "/home/marc/msd/data/"
   data_location_saving_test_data: "/home/marc/msd/results/"
 
