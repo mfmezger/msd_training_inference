@@ -11,15 +11,15 @@ def padding(img, mask, target_size, padding=False, upsample=False, downsample=Fa
     """If padding True then pad the image to the target size."""
     if  tuple(img.size()) == target_size:
         return img, mask
-
+    print(img.size(), target_size)
     if padding:
         # performance wise probably better. But avoids the issue of the not even pads.
         tmp_img = torch.zeros(target_size)
-        tmp_img[0, : img.shape[0], : img.shape[1], : img.shape[2]] = img
+        tmp_img[:,:, : img.shape[2], : img.shape[3], : img.shape[4]] = img
         img = tmp_img
 
         tmp_mask = torch.zeros(target_size)
-        tmp_mask[0, : img.shape[0], : img.shape[1], : img.shape[2]] = mask
+        tmp_mask[:,:, : mask.shape[2], : mask.shape[3], : mask.shape[4]] = mask
         mask = tmp_mask
 
     if upsample:
@@ -44,7 +44,7 @@ class TorchDataSet(Dataset):
     Loading the Datasets
     """
 
-    def __init__(self, directory, padding_bool=False, target_size=(1, 20, 512, 512)):
+    def __init__(self, directory, padding_bool=False, target_size=(1, 1, 20, 512, 512)):
         self.directory = directory
         self.images = os.listdir(directory)
         self.target_size = target_size
@@ -65,8 +65,8 @@ class TorchDataSet(Dataset):
         mask = file["mask"]
 
         # change the datatype to float32 if you do not use FP16.
-        image = image.to(torch.float32).unsqueeze(0)
-        mask = mask.to(torch.float32).unsqueeze(0)
+        image = image.to(torch.float32).unsqueeze(0).unsqueeze(0)
+        mask = mask.to(torch.float32).unsqueeze(0).unsqueeze(0)
         image_size = tuple(image.size())
         if image_size != self.target_size:
             if self.padding_bool:
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     # save the tensor to disk.
     torch.save(
         {"vol": a, "mask": b},
-        "../data/test.pt",
+        "data\\test.pt",
     )
 
     # dataset = TorchDataSet(
@@ -117,4 +117,4 @@ if __name__ == "__main__":
     img, mask = dataset[0]
     print(img.shape)
 
-    view_batch(img, mask, height=512, width=512)
+    view_batch(img[0], mask[0], height=512, width=512)
