@@ -5,11 +5,6 @@ from autoencoder import AutoEncoder
 from monai.networks.nets import UNet
 from PTTestDataSet import TorchTestDataSet
 
-# hyperparameters
-batch_size = 512
-epochs = 2000
-learning_rate = 1e-3
-
 
 def main():
     # load the training config.

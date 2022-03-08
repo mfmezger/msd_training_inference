@@ -13,6 +13,7 @@ logging:
 
 # define the hyperparameters for training.
 hyper_parameters:
+  common_size: (1,1,100,512,512)
   batch_size: 32
   num_epochs: 100
   num_workers: 0

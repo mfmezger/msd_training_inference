@@ -46,8 +46,8 @@ def main():
 
     # test initial pass if model capacity is enough.
     # create empty tensor for testing.
-    # TODO: find common  size.
-    test_input = torch.randn(1, 1, 100, 512, 512)
+    common_size = cfg["hyper_parameters"]["common_size"]
+    test_input = torch.randn(common_size)
 
     # propagate the input through the model
     test_output = model(test_input)
@@ -58,8 +58,8 @@ def main():
     # define dataset.
     data_dir_train = cfg["data"]["data_dir_train"]
     data_dir_val = cfg["data"]["data_dir_val"]
-    train_ds = TorchDataSet(directory=data_dir_train)
-    val_ds = TorchDataSet(directory=data_dir_val)
+    train_ds = TorchDataSet(directory=data_dir_train, target_size=common_size)
+    val_ds = TorchDataSet(directory=data_dir_val, target_size=common_size)
     # create a dataloader object.
     train_loader = DataLoader(
         train_ds, batch_size=batch_size, shuffle=True, num_workers=num_workers
