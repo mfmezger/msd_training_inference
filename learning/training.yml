@@ -18,3 +18,4 @@ hyper_parameters:
   num_epochs: 100
   num_workers: 0
   lr: 0.001
+  sn_mode: False

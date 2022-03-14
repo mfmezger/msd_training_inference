@@ -88,7 +88,7 @@ if __name__ == "__main__":
         {"vol": a}, "test.pt",
     )
 
-    dataset = TorchTestDataSet(directory="data/",)
+    dataset = TorchTestDataSet(directory="data/",) 
     img = dataset[0]
     print(img.shape)
 
